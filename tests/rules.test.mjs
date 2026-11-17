@@ -25,7 +25,7 @@ test('copy: no em dashes or exclamation marks, and none of the stock words, in t
     let raw = readFileSync(f, 'utf8');
     // The line in metadata.md that names the rule.
     if (f.endsWith('metadata.md')) raw = raw.split('\n').filter((l) => !l.startsWith('Copy rules:')).join('\n');
-    assert.ok(!raw.includes('—') && !raw.includes('&mdash;'), `em dash in ${f}`);
+    assert.ok(!raw.includes('\u2014') && !raw.includes('&mdash;'), `em dash in ${f}`);
     const s = /\.(ts|tsx)$/.test(f) ? readable(raw) : raw.replace(/<!--[\s\S]*?-->|<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/g, '');
     const text = s.replace(/<[^>]+>/g, ' ');
     assert.ok(!/[A-Za-z]!(\s|$|['"`<)])/.test(text), `exclamation mark in ${f}`);
