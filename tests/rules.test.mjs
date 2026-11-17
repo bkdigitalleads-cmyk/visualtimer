@@ -84,3 +84,27 @@ test('rating asks: after the third finished timer when the parent closes it, and
   const rev = readFileSync(`${ROOT}src/reviews.ts`, 'utf8');
   assert.match(rev, /launchState !== 'idle' \|\| timerOnScreen\(\)/, 'one per launch, never with a timer on screen');
 });
+
+test('paywall: Yearly first and preselected from the store, close after 3 seconds on first launch, legal links always shown', () => {
+  const pay = readFileSync(`${ROOT}src/screens/Paywall.tsx`, 'utf8');
+  assert.match(pay, /const ONBOARDING_CLOSE_DELAY_MS = 3000;/);
+  assert.match(pay, /\.sort\(\(a, b\) => planRank\(a\.packageType\) - planRank\(b\.packageType\)\)/);
+  assert.match(pay, /const lead = preselect\(pkgs\.map\(\(p\) => p\.packageType\)\)/);
+  assert.match(pay, /perWeekLine\(p\.product\.price, p\.product\.currencyCode\)/, 'the weekly equivalent under Yearly');
+  assert.match(pay, /p\.product\.priceString/, 'prices from the store');
+  assert.match(pay, /Terms of Use \(EULA\)/);
+  assert.match(pay, /Privacy Policy/);
+  assert.match(pay, /Restore purchases/);
+  assert.match(pay, /maybeRequestReviewAfterPurchase\(true, trial\)/, 'a trial that starts asks for a rating');
+  assert.match(pay, /scheduleTrialReminderIfTrial\(\)/);
+});
+
+test('onboarding: three screens with real scenes, a 10 second try, then the paywall', () => {
+  const w = readFileSync(`${ROOT}src/screens/Welcome.tsx`, 'utf8');
+  assert.equal((w.match(/^  \{\n    scene: '/gm) ?? []).length, 3, 'three value screens');
+  assert.match(w, /const TRY_SECONDS = 10;/);
+  assert.match(w, /<Scene id=\{p\.scene\}/);
+  const app = readFileSync(`${ROOT}App.tsx`, 'utf8');
+  assert.match(app, /<Welcome onDone=\{finish\} \/>\s*<PaywallModal onboarding \/>/);
+  assert.match(app, /askPro\(\)\.then\(done\)/);
+});

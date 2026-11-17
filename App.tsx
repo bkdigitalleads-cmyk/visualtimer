@@ -13,18 +13,55 @@ import History from './src/screens/History';
 import Settings from './src/screens/Settings';
 import RunScreen from './src/screens/Run';
 import PaywallModal from './src/screens/Paywall';
+import Welcome from './src/screens/Welcome';
 import TabBar, { Tab } from './src/ui/TabBar';
+import { flagGet, flagSet } from './src/store';
 
 function Shell() {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
-  const { ready } = useApp();
+  const { ready, isPro, askPro } = useApp();
   const runner = useRunner();
   const [tab, setTab] = useState<Tab>('timer');
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [onboarded, setOnboarded] = useState<boolean | null>(null);
+  const paywallAsked = useRef(false);
   const replay = useRef(() => {});
+  replay.current = () => {
+    paywallAsked.current = false;
+    setOnboarded(false);
+  };
 
-  if (!ready) return <View style={{ flex: 1, backgroundColor: theme.bg }} />;
+  useEffect(() => {
+    if (!ready || onboarded !== null) return;
+    flagGet('onboarded')
+      .then((v) => setOnboarded(v === '1' || isPro))
+      .catch(() => setOnboarded(true)); // fail open: never trap anyone
+  }, [ready, onboarded, isPro]);
+
+  if (!ready || onboarded === null) return <View style={{ flex: 1, backgroundColor: theme.bg }} />;
+
+  if (!onboarded) {
+    // After the screens: the paywall (its close button shows after 3 seconds), then the app.
+    const finish = () => {
+      if (paywallAsked.current) return;
+      paywallAsked.current = true;
+      const done = () => {
+        flagSet('onboarded', '1');
+        setTab('timer');
+        setOnboarded(true);
+      };
+      if (isPro) return done();
+      askPro().then(done);
+    };
+    return (
+      <View style={{ flex: 1, backgroundColor: theme.bg }}>
+        <StatusBar style={theme.isDark ? 'light' : 'dark'} />
+        <Welcome onDone={finish} />
+        <PaywallModal onboarding />
+      </View>
+    );
+  }
 
   const openSettings = () => setSettingsOpen(true);
   let body: React.ReactNode;
