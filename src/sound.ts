@@ -18,7 +18,8 @@ const FILES = {
   warn: require('../assets/sounds/warn.wav'),
 } as const;
 
-type Name = keyof typeof FILES;
+export type SoundFile = keyof typeof FILES;
+type Name = SoundFile;
 
 const players: Partial<Record<Name, AudioPlayer>> = {};
 let modeSet = false;

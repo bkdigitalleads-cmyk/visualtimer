@@ -1,20 +1,48 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Text, View } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { useFonts } from 'expo-font';
-import { useTheme, FONT_FILES, space, type } from './src/theme';
+import { useTheme, FONT_FILES, space } from './src/theme';
 import { AppProvider, useApp } from './src/state';
+import { RunnerProvider, useRunner } from './src/runner';
+import TimerHome from './src/screens/TimerHome';
+import Saved from './src/screens/Saved';
+import Routines from './src/screens/Routines';
+import History from './src/screens/History';
+import Settings from './src/screens/Settings';
+import RunScreen from './src/screens/Run';
+import PaywallModal from './src/screens/Paywall';
+import TabBar, { Tab } from './src/ui/TabBar';
 
 function Shell() {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   const { ready } = useApp();
+  const runner = useRunner();
+  const [tab, setTab] = useState<Tab>('timer');
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const replay = useRef(() => {});
+
   if (!ready) return <View style={{ flex: 1, backgroundColor: theme.bg }} />;
+
+  const openSettings = () => setSettingsOpen(true);
+  let body: React.ReactNode;
+  if (tab === 'timer') body = <TimerHome onSettings={openSettings} />;
+  else if (tab === 'saved') body = <Saved onSettings={openSettings} />;
+  else if (tab === 'routines') body = <Routines onSettings={openSettings} />;
+  else body = <History onSettings={openSettings} />;
+
   return (
-    <View style={{ flex: 1, backgroundColor: theme.bg, paddingTop: insets.top, padding: space.l }}>
+    <View style={{ flex: 1, backgroundColor: theme.bg }}>
       <StatusBar style={theme.isDark ? 'light' : 'dark'} />
-      <Text style={[type.title, { color: theme.ink }]}>Visual Timer</Text>
+      <View style={{ flex: 1, paddingTop: insets.top, paddingLeft: insets.left, paddingRight: insets.right }} accessibilityElementsHidden={runner.visible} importantForAccessibility={runner.visible ? 'no-hide-descendants' : 'auto'}>
+        {body}
+      </View>
+      {!runner.visible ? <TabBar theme={theme} tab={tab} onTab={setTab} /> : null}
+      <Settings visible={settingsOpen} onClose={() => setSettingsOpen(false)} onReplayOnboarding={() => replay.current()} />
+      <RunScreen />
+      <PaywallModal />
     </View>
   );
 }
@@ -55,7 +83,9 @@ export default function App() {
     <Guard>
       <SafeAreaProvider>
         <AppProvider>
-          <Shell />
+          <RunnerProvider>
+            <Shell />
+          </RunnerProvider>
         </AppProvider>
       </SafeAreaProvider>
     </Guard>
