@@ -1,0 +1,76 @@
+{
+  "expo": {
+    "name": "Visual Timer",
+    "slug": "visualtimer",
+    "version": "1.0.0",
+    "orientation": "default",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "backgroundColor": "#F5EFE4",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.bwk.visualtimer",
+      "buildNumber": "1",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false,
+        "LSApplicationCategoryType": "public.app-category.productivity"
+      }
+    },
+    "android": {
+      "package": "com.bwk.visualtimer",
+      "adaptiveIcon": {
+        "backgroundColor": "#2A8C82",
+        "foregroundImage": "./assets/android-icon-foreground.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "./plugins/withoutPushEntitlement",
+      "expo-font",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 120,
+          "resizeMode": "contain",
+          "backgroundColor": "#F5EFE4",
+          "dark": {
+            "image": "./assets/splash-icon.png",
+            "backgroundColor": "#1C1916"
+          }
+        }
+      ],
+      [
+        "expo-audio",
+        {
+          "microphonePermission": false,
+          "recordAudioAndroid": false,
+          "enableBackgroundPlayback": false,
+          "enableBackgroundRecording": false
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "sounds": [
+            "./assets/sounds/chime.wav",
+            "./assets/sounds/bells.wav",
+            "./assets/sounds/marimba.wav",
+            "./assets/sounds/harp.wav",
+            "./assets/sounds/drum.wav"
+          ]
+        }
+      ]
+    ],
+    "extra": {
+      "revenueCatApiKeyIos": "TODO_COWORK_REVENUECAT_PUBLIC_IOS_KEY",
+      "eas": {
+        "projectId": "TODO_COWORK_EXPO_PROJECT_ID"
+      }
+    },
+    "owner": "bkdeveloper123"
+  }
+}
