@@ -6,7 +6,8 @@ Part of Brian's iOS app portfolio (seller bkdigitalleads-cmyk). Expo SDK 57, Rea
 
 - App Store name: "Visual Timer: Kids Timer". Subtitle: "Countdown Clock, ADHD & Focus". Home screen and in-app name: "Visual Timer". Bundle ID com.bwk.visualtimer. Expo slug visualtimer, owner bkdeveloper123. GitHub: bkdigitalleads-cmyk/visualtimer. iPhone only, portrait and landscape.
 - Not in the store yet. Version 1.0.0 build 1 is on branch claude/timer-1.0.0 (PR, not merged).
-- Three placeholders for Cowork, and only these: app.json `extra.eas.projectId`, app.json `extra.revenueCatApiKeyIos` (the public SDK key, starts with `appl_`) and eas.json `submit.production.ios.ascAppId`. Each holds a `TODO_COWORK_...` value until Cowork fills it. The app runs with purchases off while the key does not start with `appl_`.
+- Set up from Cowork (Nov 17, 2026): app.json `extra.revenueCatApiKeyIos` (the public SDK key, starts with `appl_`) and eas.json `ascAppId` 6835862580. One placeholder is left: app.json `extra.eas.projectId` holds a `TODO_COWORK_...` value until the Expo project exists. The app runs with purchases off whenever the key does not start with `appl_`.
+- App Store Connect and RevenueCat: visualtimer_pro_yearly (3 day free trial), visualtimer_pro_weekly (no trial), visualtimer_pro_lifetime; entitlement `pro`; offering `default` with $rc_annual, $rc_weekly and $rc_lifetime.
 - What it is: a visual countdown timer for young children, used by parents, teachers and therapists, including families dealing with ADHD and autism. A child who cannot read a clock sees the time disappear in a scene. Offline, no accounts, no servers, no ads, no analytics.
 
 ## How shipping works (read before every push)

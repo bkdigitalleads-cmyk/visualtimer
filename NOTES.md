@@ -2,6 +2,10 @@
 
 Newest first. One entry per commit: date, version/build, what changed and why, and how it was checked.
 
+- 2026-11-17: 1.0.0 build 1, values from Cowork (config only).
+  - app.json extra.revenueCatApiKeyIos is now the public RevenueCat SDK key (appl_...), so purchases are on in builds. eas.json ascAppId is 6835862580. The Expo project id stays a placeholder until the project is created; the config test now checks that it is the only TODO_COWORK value left.
+  - Cowork confirmed the store name "Visual Timer: Kids Timer" and the products: visualtimer_pro_yearly (3 day free trial), visualtimer_pro_weekly (no trial), visualtimer_pro_lifetime, entitlement pro, offering default with $rc_annual, $rc_weekly, $rc_lifetime. These match src/offer.ts and the paywall order; nothing in code changed for them.
+  - Checked: npm test, npx tsc --noEmit.
 - 2026-11-17: 1.0.0 build 1, step 4 of 7: screens, saved timers, routines, history, settings.
   - Timer (src/screens/TimerHome.tsx): a dial (one turn is 60 minutes, stops at 1 and 60, a tick each minute, VoiceOver adjustable) with the chosen scene in its middle, the time in words, the presets 1, 2, 5, 10, 15, 20, 30, 45 and 60 minutes as big chips, the scene picker (live thumbnails, a lock on Pro ones) and, for the disc, the color picker. The first Start asks to allow notifications, so the end is heard with the phone locked.
   - Running (src/screens/Run.tsx): the scene as big as the screen allows, the digits under it (a setting), pause, +1, +5, restart, and Next for a routine. Stop asks first. Portrait and landscape layouts. Classroom mode (Pro) locks to landscape with the scene and huge digits side by side. Child lock (Pro, or on by itself from Settings): the controls go away, every touch shows "Locked. A grown-up can hold a corner for 2 seconds.", and holding any corner for 2 seconds (a ring fills) unlocks. Done: the scene's ending, "All done", Again, 1 minute, Close. Routines show the steps as a row of icons (ticked, current ringed), "Next: ..." and a 5 second "Well done" with five dots going out before the next step.
