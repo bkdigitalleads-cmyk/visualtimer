@@ -13,7 +13,7 @@
       "buildNumber": "1",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
-        "LSApplicationCategoryType": "public.app-category.productivity"
+        "LSApplicationCategoryType": "public.app-category.education"
       }
     },
     "android": {

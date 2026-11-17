@@ -22,7 +22,9 @@ const readable = (s) => (s.match(/'[^'\n]*'|"[^"\n]*"|`[^`]*`|>[^<>{}]+</g) ?? [
 test('copy: no em dashes or exclamation marks, and none of the stock words, in the app, the website or the store text', () => {
   const files = [...code, ...walk(`${ROOT}docs`, ['.html']), ...walk(`${ROOT}store`, ['.md'])];
   for (const f of files) {
-    const raw = readFileSync(f, 'utf8');
+    let raw = readFileSync(f, 'utf8');
+    // The line in metadata.md that names the rule.
+    if (f.endsWith('metadata.md')) raw = raw.split('\n').filter((l) => !l.startsWith('Copy rules:')).join('\n');
     assert.ok(!raw.includes('—') && !raw.includes('&mdash;'), `em dash in ${f}`);
     const s = /\.(ts|tsx)$/.test(f) ? readable(raw) : raw.replace(/<!--[\s\S]*?-->|<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/g, '');
     const text = s.replace(/<[^>]+>/g, ' ');
@@ -107,4 +109,56 @@ test('onboarding: three screens with real scenes, a 10 second try, then the payw
   const app = readFileSync(`${ROOT}App.tsx`, 'utf8');
   assert.match(app, /<Welcome onDone=\{finish\} \/>\s*<PaywallModal onboarding \/>/);
   assert.match(app, /askPro\(\)\.then\(done\)/);
+});
+
+test('store text: name and subtitle fit, keywords fit and repeat no word from them, promo and description fit, six screenshots in both sizes', async () => {
+  const md = readFileSync(`${ROOT}store/metadata.md`, 'utf8');
+  const name = md.match(/- Name \(\d+\/30\): (.+)/)[1];
+  const sub = md.match(/- Subtitle \(\d+\/30\): (.+)/)[1];
+  assert.equal(name, 'Visual Timer: Kids Timer');
+  assert.equal(sub, 'Countdown Clock, ADHD & Focus');
+  assert.ok(name.length <= 30 && sub.length <= 30);
+  const kw = md.match(/## Keywords \((\d+)\/100\)\n\n([^\n]+)/);
+  assert.equal(kw[2].length, Number(kw[1]));
+  assert.ok(kw[2].length <= 100);
+  assert.ok(!/\s/.test(kw[2]), 'no spaces in the keyword field');
+  const taken = new Set(`${name} ${sub}`.toLowerCase().match(/[a-z]+/g));
+  for (const w of kw[2].split(',')) {
+    assert.ok(!taken.has(w) && !taken.has(w.replace(/s$/, '')) && !taken.has(`${w}s`), `${w} repeats the name or subtitle`);
+  }
+  const promo = md.match(/## Promotional text \((\d+)\/170\)\n\n([^\n]+)/);
+  assert.equal(promo[2].length, Number(promo[1]));
+  const desc = md.split('## Description')[1].split('## What')[0].trim();
+  assert.ok(desc.length > 500 && desc.length <= 4000, `description is ${desc.length}`);
+  const { createRequire } = await import('node:module');
+  const require = createRequire(import.meta.url);
+  let sharp;
+  try {
+    sharp = require(`${ROOT}store/node_modules/sharp`);
+  } catch {
+    sharp = null; // store tools not installed: check the PNG headers instead
+  }
+  for (const [dir, w, h] of [['6.9', 1320, 2868], ['6.3', 1206, 2622]]) {
+    const files = readdirSync(`${ROOT}store/screenshots/${dir}`).filter((f) => f.endsWith('.png'));
+    assert.equal(files.length, 6, `${dir} has six`);
+    for (const f of files) {
+      const b = readFileSync(`${ROOT}store/screenshots/${dir}/${f}`);
+      assert.equal(b.readUInt32BE(16), w, `${f} width`);
+      assert.equal(b.readUInt32BE(20), h, `${f} height`);
+    }
+  }
+  void sharp;
+});
+
+test('website: landing, privacy and support pages; the privacy page says Purchases, not linked, and nothing else is collected', () => {
+  for (const f of ['index.html', 'privacy.html', 'support.html', 'style.css', 'icon-512.png', 'og-image.png']) assert.ok(existsSync(`${ROOT}docs/${f}`), f);
+  const priv = readFileSync(`${ROOT}docs/privacy.html`, 'utf8');
+  assert.match(priv, /Purchases, not linked to you/);
+  assert.match(priv, /RevenueCat/);
+  assert.match(priv, /Nothing else is collected/);
+  assert.ok(!/Data Not Collected/i.test(priv));
+  const support = readFileSync(`${ROOT}docs/support.html`, 'utf8');
+  assert.match(support, /mailto:bkdigitalleads@gmail\.com/);
+  // No third-party requests from the site: fonts are served from docs/fonts.
+  for (const f of walk(`${ROOT}docs`, ['.html', '.css'])) assert.ok(!/<script|fonts\.googleapis|googletagmanager|gtag\(/.test(readFileSync(f, 'utf8')), f);
 });

@@ -2,6 +2,26 @@
 
 Newest first. One entry per commit: date, version/build, what changed and why, and how it was checked.
 
+- 2026-11-17: 1.0.0 build 1, step 7 of 7: website, store text, screenshots.
+  - docs/ (GitHub Pages from the docs folder): index.html (what it does, made for children, free and Pro with prices, six screenshots), privacy.html, support.html, style.css, robots.txt, sitemap.xml, icon and Open Graph images. The two fonts are served from docs/fonts with their OFL licences, so the site makes no third-party requests and has no scripts. The privacy page says what the App Store label says: Purchases (purchase history) through RevenueCat, not linked to you, and nothing else collected.
+  - store/metadata.md: name, subtitle, keywords (96/100: autism,toddler,preschool,classroom,teacher,routine,schedule,hourglass,sand,bedtime,therapy,child; no word from the name or subtitle), promotional text (157/170), description, the products table, App Privacy, screenshot captions and App Review notes. Suggested category Education, secondary Productivity, not the Kids category (reasons in the review notes); app.json LSApplicationCategoryType now education to match.
+  - store/screenshots.js: six captioned screenshots from docs/design/light, in Fredoka on the oat background, no device frames: 1320x2868 (store/screenshots/6.9) and 1206x2622 (store/screenshots/6.3). The second is a grid of six scenes cut from running screens. The website's shot-1 to shot-6 come from the same run.
+  - From the screenshots: the "Coral" disc color on its pale plate drifted toward a red disc on a white face, so that swatch is now Orange (#F2994A, same stored id); screenshot 1 and the renders use teal, and the color picker render shows Sky. The child lock note now shows where the controls were, at the bottom, so it covers neither the time nor the "Next" line.
+  - Tests: store text lengths and keyword rules, both screenshot sizes, the privacy page wording, no scripts or third-party fonts on the site.
+  - Checked: npx tsc --noEmit clean; npm test 39/39; npx expo export --platform ios bundles (Hermes, 3.5 MB); npx expo config --type introspect shows ios.entitlements {}, no NSMicrophoneUsageDescription, no UIBackgroundModes, version 1.0.0 (1); npx expo-doctor 21/21.
+  - TestFlight checklist (none of this can be judged from the sandbox):
+    1. First launch: the three screens, the 10 second try (sound and buzz at the end), the notification prompt, the paywall with real prices, the close button after 3 seconds.
+    2. Start a 1 minute timer, lock the phone: the end sound plays from the notification. Then with the ring switch on silent (the notification is silent then; the app open on screen still plays it).
+    3. Start 5 minutes, go to another app for 2 minutes and come back: the time is right. Force-quit mid-timer and reopen: it is still running.
+    4. Each end sound in Settings; the tick; the one minute warning on a 5 minute timer. Do the sounds feel gentle enough.
+    5. Child lock: touches do nothing, holding a corner 2 seconds undoes it. Classroom mode turns the phone and back.
+    6. A routine with the phone locked between steps: one notification per step, right step on return.
+    7. Buy Yearly in the sandbox: trial wording, "No payment now", the rating prompt after the alert. Restore on a second device.
+    8. VoiceOver on the timer screen, the dial (swipe up and down) and the running scene.
+  - Noticed, not changed:
+    - On a real pageSheet the paywall may need a small scroll to show the Weekly row on a 6.1 inch phone; the plans and the button fit in the 393x852 render with the sheet drawn full height.
+    - The Expo project id is still the placeholder, so the EAS workflow cannot run until Cowork creates the project and fills app.json extra.eas.projectId.
+    - GitHub Pages for this repo has to be set to deploy from the docs folder on main for the privacy and support URLs to work.
 - 2026-11-17: 1.0.0 build 1, step 6 of 7: design pass, renders, icon.
   - docs/design/NOTES.md has the concept ("the kitchen table"), the system, the scene table, the icon options and what the "does it look AI-built" pass found.
   - Changed from the renders: History shows a plain timer's scene instead of an empty dot; the PRO tag on a saved timer moved to its second line (it cut "Screen time" short); landscape leaves 56 points at the top so the close button no longer sits on the scene. Earlier steps' fixes (round scene window in the dial, controls hidden under child lock, a paywall that fits) are listed there too.

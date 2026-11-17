@@ -245,9 +245,10 @@ function CheerDots({ theme, until, now }: { theme: Theme; until: number; now: nu
 
 /**
  * Child lock. Every touch lands here and does nothing but show a small
- * note. Holding any corner for 2 seconds unlocks.
+ * note where the controls were. Holding any corner for 2 seconds unlocks.
  */
 function LockLayer({ theme, onUnlock }: { theme: Theme; onUnlock: () => void }) {
+  const insets = useSafeAreaInsets();
   const [note, setNote] = useState(false);
   useEffect(() => {
     if (!note) return;
@@ -269,7 +270,7 @@ function LockLayer({ theme, onUnlock }: { theme: Theme; onUnlock: () => void }) 
         <Corner key={c} where={c} theme={theme} onUnlock={onUnlock} onTouch={() => setNote(true)} />
       ))}
       {note ? (
-        <View pointerEvents="none" style={[styles.note, { backgroundColor: theme.ink }]}>
+        <View pointerEvents="none" style={[styles.note, { backgroundColor: theme.ink, bottom: insets.bottom + space.m }]}>
           <Glyph name="lock" color={theme.bg} size={18} />
           <Text style={[type.small, { color: theme.bg, flexShrink: 1 }]}>Locked. A grown-up can hold a corner for 2 seconds.</Text>
         </View>
@@ -314,5 +315,5 @@ const styles = StyleSheet.create({
   row: { flex: 1, flexDirection: 'row', alignItems: 'center' },
   controls: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: space.m },
   pill: { height: 56, borderRadius: 20, borderWidth: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: space.s },
-  note: { position: 'absolute', left: 24, right: 24, bottom: 120, borderRadius: 16, padding: space.m, flexDirection: 'row', gap: space.s, alignItems: 'center', justifyContent: 'center' },
+  note: { position: 'absolute', left: 24, right: 24, borderRadius: 16, padding: space.m, flexDirection: 'row', gap: space.s, alignItems: 'center', justifyContent: 'center' },
 });

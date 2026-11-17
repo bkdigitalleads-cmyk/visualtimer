@@ -71,7 +71,7 @@ No clock face, no numbers, no hands, no red disc. The splash is the tile with it
 
 - First launch: `01` to `03` the three screens with their scenes playing, `04` to `06` try it (ready, running, done), `07` and `08` the paywall before and after its close button shows.
 - Free: `10-home`, `11-saved-free`, `12-routines-free`, `13-history`, `14-paywall-in-app` (from a locked scene).
-- Pro: `20-home-pro-rocket`, `21-home-disc-coral`, `22` to `25` a 15 minute disc running, paused, at one minute left, done; `30-run-*` every other scene part way through a 10 minute timer; `40` to `43` saved timers and routines with their editors; `44-routine-step`, `45-routine-cheer`, `46-child-lock`; `47-landscape`, `48-classroom`; `49-hold-gear` (the ring filling), `50-settings`.
+- Pro: `20-home-pro-rocket`, `21-home-disc-sky`, `22` to `25` a 15 minute disc running, paused, at one minute left, done; `30-run-*` every other scene part way through a 10 minute timer; `40` to `43` saved timers and routines with their editors; `44-routine-step`, `45-routine-cheer`, `46-child-lock`; `47-landscape`, `48-classroom`; `49-hold-gear` (the ring filling), `50-settings`.
 
 The store screenshots (`store/screenshots/`, by `store/screenshots.js`) are built from the light renders.
 

@@ -43,7 +43,7 @@ export const COLORS: { id: ColorId; name: string; hex: string }[] = [
   { id: 'sky', name: 'Sky', hex: '#4A97D6' },
   { id: 'lavender', name: 'Lavender', hex: '#9784D2' },
   { id: 'berry', name: 'Berry', hex: '#D0619A' },
-  { id: 'coral', name: 'Coral', hex: '#EA7B5B' },
+  { id: 'coral', name: 'Orange', hex: '#F2994A' },
   { id: 'sun', name: 'Sunflower', hex: '#EDB13A' },
   { id: 'leaf', name: 'Leaf', hex: '#6AA84F' },
   { id: 'cocoa', name: 'Cocoa', hex: '#93664A' },

@@ -1,0 +1,119 @@
+# Visual Timer, App Store listing (1.0.0)
+
+Copy rules: no em dashes, no exclamation marks, no "unlock", "premium" or "magic", plain wording, prices only as Apple shows them. Support address: bkdigitalleads@gmail.com only.
+
+## Identity
+
+- Name (24/30): Visual Timer: Kids Timer
+- Subtitle (29/30): Countdown Clock, ADHD & Focus
+- Home screen name: Visual Timer
+- Bundle ID: com.bwk.visualtimer. ASC app id: 6835862580. SKU suggestion: visualtimer
+- Primary category: Education. Secondary: Productivity. Not the Kids category (see the review notes); age rating 4+.
+- Support URL: https://bkdigitalleads-cmyk.github.io/visualtimer/support.html
+- Marketing URL: https://bkdigitalleads-cmyk.github.io/visualtimer/
+- Privacy policy URL: https://bkdigitalleads-cmyk.github.io/visualtimer/privacy.html
+- Copyright: 2026 Brian Kershner
+
+## Keywords (96/100)
+
+autism,toddler,preschool,classroom,teacher,routine,schedule,hourglass,sand,bedtime,therapy,child
+
+None repeats a word from the name or the subtitle (visual, timer, kids, countdown, clock, adhd, focus); Apple already indexes those. No other product's name.
+
+## Promotional text (157/170)
+
+A countdown a child can see. Pick a time and a scene, press Start, and watch it go: a color disc, sand, a caterpillar, a rocket, a train. No ads, no account.
+
+## Description
+
+Some children cannot read a clock yet, and "five more minutes" means nothing to them. Visual Timer shows the time going, so they can see how much is left and what comes next.
+
+Pick a time, pick a scene, press Start. As the minutes pass, the scene changes:
+
+- A color disc that gets smaller
+- A jar of sand emptying into a bowl
+- A caterpillar eating its leaf, which turns into a butterfly at the end
+- A candle burning down
+- A rocket flying to the moon
+- An ice pop melting in the sun
+- A train on its way to the station
+- A row of stars going out one by one
+- The sun setting behind the hills
+
+Every scene is drawn for this app and has a gentle ending when time is up.
+
+MADE FOR REAL DAYS
+- Big presets: 1, 2, 5, 10, 15, 20, 30, 45 and 60 minutes, or turn the dial
+- Pause, add a minute, add five minutes, or start again
+- A soft heads-up at one minute left
+- A choice of gentle end sounds, an optional quiet tick, and haptics
+- The screen stays awake while a timer runs
+- The time stays right with the phone locked or another app open, and the end sound still plays
+
+ROUTINES
+Morning, bedtime, leaving the house. Each step has a picture, a name and a time, and the steps run one after another with a short cheer in between, so the next thing never comes as a surprise. Change them to fit your family or your class.
+
+SAVED TIMERS
+Brush teeth, screen time, clean up, homework, quiet time, or your own, each with a picture a child knows. One tap to start.
+
+CHILD LOCK AND CLASSROOM MODE
+With child lock on, little fingers cannot stop or change a running timer; a grown-up holds a corner for two seconds to undo it. Classroom mode turns the phone on its side and fills the screen with the scene and the time.
+
+FOR PARENTS, TEACHERS AND THERAPISTS
+Used at home, in classrooms and in therapy rooms, including by families living with ADHD and autism, where seeing time pass can make a transition easier.
+
+MADE FOR CHILDREN
+No ads, no analytics, no tracking, no account. It works offline and everything stays on your phone. Settings sit behind a two second grown-up hold, and nothing on the timer screen leads out of the app.
+
+FREE AND PRO
+Free: the color disc, the sand jar and the caterpillar, every preset and the dial, one saved timer, every sound and history. Visual Timer Pro adds all nine scenes and every color, unlimited saved timers, routines, child lock and classroom mode. Pro is a yearly subscription with a free trial for new subscribers, a one-time lifetime purchase, or a weekly subscription. Subscriptions renew until cancelled in your Apple ID settings.
+
+Terms of Use: https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
+Privacy: https://bkdigitalleads-cmyk.github.io/visualtimer/privacy.html
+
+## What's New (1.0.0)
+
+First release.
+
+## In-app purchases (RevenueCat offering `default`, entitlement `pro`)
+
+| Package | Product id | Type | Price | Notes |
+| --- | --- | --- | --- | --- |
+| $rc_annual | visualtimer_pro_yearly | Auto-renewing, 1 year | $24.99 | 3 day free trial. Listed first and preselected, with "About $0.48 a week" |
+| $rc_lifetime | visualtimer_pro_lifetime | Non-consumable | $49.99 | Listed second |
+| $rc_weekly | visualtimer_pro_weekly | Auto-renewing, 1 week | $4.99 | No trial. Listed third |
+
+Subscription group: Visual Timer Pro. Display names: "Visual Timer Pro Yearly", "Visual Timer Pro Lifetime", "Visual Timer Pro Weekly". Description for each: "Every scene and color, routines, child lock, classroom mode." Prices on screen always come from the store through RevenueCat.
+
+## App Privacy
+
+- Data collected: Purchases (purchase history), through RevenueCat. Not linked to the user. Not used for tracking. Used for app functionality.
+- Nothing else is collected. No analytics, no ads, no tracking, no account, no server of our own.
+- The privacy policy says exactly this.
+
+## Screenshots
+
+Six captioned screenshots made by `store/screenshots.js` from the renders in docs/design/light:
+
+- 6.9 inch, 1320x2868: store/screenshots/6.9/
+- 6.3 inch, 1206x2622: store/screenshots/6.3/
+
+1. A Timer Kids Can See (the color disc running)
+2. Nine Scenes to Choose From (rocket, caterpillar, ice pop, sunset, train, candle)
+3. Routines, Step by Step (the bedtime routine on its bath step)
+4. Big Presets and a Dial (the timer screen)
+5. Saved Timers for Every Day
+6. Child Lock for Little Hands
+
+## App Review notes (1.0.0)
+
+Visual Timer is a visual countdown timer for young children, used by parents, teachers and therapists. There is no account and no sign-in; everything is stored on the device.
+
+- First launch: three short screens, then a 10 second timer to try, then the Pro screen. Its close button (top right) appears after 3 seconds. Close it to use the free version.
+- The free version is fully usable: three scenes (the color disc, the sand jar, the caterpillar), the presets and dial, one saved timer, every sound and history. Pro adds all nine scenes and colors, unlimited saved timers, routines, child lock and classroom mode. Tapping anything with a lock opens the Pro screen.
+- Settings: hold the gear (top right of any tab) for 2 seconds. This keeps children out of settings, support links and purchases from settings.
+- Child lock (Pro): tap the lock on a running timer. To undo it, hold any corner of the screen for 2 seconds.
+- Free trial wording appears only when the Apple ID is eligible for the yearly plan's 3 day trial; the Weekly plan has no trial.
+- Notifications are local only: the end of a timer, each routine step, and one reminder the day before a free trial ends. No push notifications, and the app does not have the push entitlement.
+- All sounds and drawings were made for this app.
+- We have not put the app in the Kids category: it is used by adults with children, and purchases and support links are reachable from the parent's screens.

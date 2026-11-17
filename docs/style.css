@@ -1,0 +1,34 @@
+@font-face { font-family: "Fredoka"; src: url("fonts/Fredoka-SemiBold.ttf") format("truetype"); font-weight: 600; font-display: swap; }
+@font-face { font-family: "Nunito"; src: url("fonts/Nunito-Regular.ttf") format("truetype"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Nunito"; src: url("fonts/Nunito-Bold.ttf") format("truetype"); font-weight: 700; font-display: swap; }
+:root { --table:#F5EFE4; --card:#FFFAF2; --ink:#2B2622; --sub:#6B6158; --faint:#9C9186; --rule:#E5DCCD; --teal:#1F7F74; --onteal:#FFFAF2; --sun:#F2B43D; }
+@media (prefers-color-scheme: dark) {
+  :root { --table:#1C1916; --card:#26221E; --ink:#F3ECE1; --sub:#BFB4A6; --faint:#8B8176; --rule:#3A342E; --teal:#5CC2B4; --onteal:#102420; }
+}
+* { box-sizing: border-box; }
+body { margin:0; background:var(--table); color:var(--ink); font-family:"Nunito",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif; line-height:1.6; font-size:17px; }
+.wrap { max-width:720px; margin:0 auto; padding:36px 20px 64px; }
+h1, h2, h3, .brand, .price b { font-family:"Fredoka","Nunito",sans-serif; font-weight:600; }
+h1 { font-size:40px; line-height:1.12; margin:22px 0 10px; }
+h2 { font-size:26px; margin:42px 0 8px; }
+h3 { font-size:19px; margin:24px 0 4px; }
+p { margin:8px 0; }
+a { color:var(--ink); text-decoration-thickness:1.5px; text-underline-offset:3px; }
+.brand { display:flex; align-items:center; gap:10px; font-size:22px; color:var(--ink); text-decoration:none; }
+.brand img { border-radius:9px; }
+.tag { color:var(--sub); font-size:19px; }
+.cta { display:inline-block; background:var(--teal); color:var(--onteal); font-weight:700; padding:15px 28px; border-radius:24px; text-decoration:none; margin:16px 0 4px; }
+.small { color:var(--faint); font-size:14px; }
+.shots { display:flex; gap:12px; overflow-x:auto; margin:28px -20px 6px; padding:0 20px 10px; scroll-snap-type:x mandatory; }
+.shots img { width:210px; height:auto; border-radius:24px; border:1px solid var(--rule); flex:none; scroll-snap-align:start; }
+.rows { margin-top:18px; display:grid; gap:12px; }
+.rows div { background:var(--card); border:1px solid var(--rule); border-radius:20px; padding:16px 18px; }
+.rows b { display:block; font-family:"Fredoka","Nunito",sans-serif; font-weight:600; font-size:20px; margin-bottom:2px; }
+.price { display:grid; grid-template-columns:repeat(auto-fit, minmax(190px, 1fr)); gap:12px; margin-top:14px; }
+.price div { background:var(--card); border:1px solid var(--rule); border-radius:20px; padding:16px 18px; }
+.price b { display:block; font-size:22px; }
+.price .best { border:2px solid var(--teal); }
+.note { background:var(--card); border:1px solid var(--rule); border-radius:20px; padding:14px 18px; color:var(--sub); margin-top:26px; }
+footer { margin-top:56px; padding-top:18px; border-top:1px solid var(--rule); color:var(--faint); font-size:14px; }
+footer a { margin-right:14px; color:var(--sub); }
+@media (max-width: 420px) { h1 { font-size:34px; } }
