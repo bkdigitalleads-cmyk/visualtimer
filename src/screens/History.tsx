@@ -5,6 +5,8 @@ import { useApp } from '../state';
 import { dayKey } from '../rules';
 import { durationShort, historyByDay, HistoryDay } from '../model';
 import { TimerIcon } from '../ui/Glyph';
+import Scene from '../scenes/Scene';
+import { colorHex } from '../model';
 import { Card, HoldGear } from '../ui/Kit';
 
 function dayTitle(day: string, now: number): string {
@@ -54,7 +56,11 @@ export default function History({ onSettings }: { onSettings: () => void }) {
                   accessible
                   accessibilityLabel={`${e.name}, ${durationShort(e.seconds)}, finished at ${new Date(e.at).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })}`}
                 >
-                  {e.icon ? <TimerIcon id={e.icon} size={36} dark={theme.isDark} /> : <View style={[styles.dot, { backgroundColor: theme.accentSoft }]} />}
+                  {e.icon ? (
+                    <TimerIcon id={e.icon} size={36} dark={theme.isDark} />
+                  ) : (
+                    <Scene id={e.scene} f={0.62} t={1.3} color={colorHex('teal')} dark={theme.isDark} size={36} />
+                  )}
                   <Text style={[type.body, { color: theme.ink, flex: 1 }]} numberOfLines={1}>
                     {e.name}
                   </Text>
@@ -78,5 +84,4 @@ const styles = StyleSheet.create({
   head: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: space.l, paddingTop: space.s, height: 60, zIndex: 2 },
   dayHead: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: space.s, paddingHorizontal: space.xs },
   row: { flexDirection: 'row', alignItems: 'center', gap: space.m, paddingHorizontal: space.l, paddingVertical: space.m },
-  dot: { width: 36, height: 36, borderRadius: 18 },
 });

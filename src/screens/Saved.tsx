@@ -63,15 +63,15 @@ export default function Saved({ onSettings }: { onSettings: () => void }) {
               <Tap onPress={() => run(s, i)} accessibilityRole="button" accessibilityLabel={`Start ${s.name}, ${durationShort(s.seconds)}${ok ? '' : ', Pro'}`} style={styles.cardMain}>
                 <TimerIcon id={s.icon} size={52} dark={theme.isDark} />
                 <View style={{ flex: 1 }}>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.s }}>
-                    <Text style={[type.heading, { color: theme.ink, flexShrink: 1 }]} numberOfLines={1}>
-                      {s.name}
+                  <Text style={[type.heading, { color: theme.ink }]} numberOfLines={1}>
+                    {s.name}
+                  </Text>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.s, marginTop: 2 }}>
+                    <Text style={[type.small, { color: theme.inkSoft, flexShrink: 1 }]} numberOfLines={1}>
+                      {durationShort(s.seconds)}, {sceneInfo(look.scene).name.toLowerCase()}
                     </Text>
                     {!ok ? <ProTag theme={theme} /> : null}
                   </View>
-                  <Text style={[type.small, { color: theme.inkSoft, marginTop: 2 }]}>
-                    {durationShort(s.seconds)}, {sceneInfo(look.scene).name.toLowerCase()}
-                  </Text>
                 </View>
                 <Scene id={look.scene as SavedTimer['scene']} f={0.62} t={1.3} color={colorHex(look.color)} dark={theme.isDark} size={52} />
               </Tap>

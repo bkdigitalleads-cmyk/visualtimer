@@ -2,6 +2,12 @@
 
 Newest first. One entry per commit: date, version/build, what changed and why, and how it was checked.
 
+- 2026-11-17: 1.0.0 build 1, step 6 of 7: design pass, renders, icon.
+  - docs/design/NOTES.md has the concept ("the kitchen table"), the system, the scene table, the icon options and what the "does it look AI-built" pass found.
+  - Changed from the renders: History shows a plain timer's scene instead of an empty dot; the PRO tag on a saved timer moved to its second line (it cut "Screen time" short); landscape leaves 56 points at the top so the close button no longer sits on the scene. Earlier steps' fixes (round scene window in the dial, controls hidden under child lock, a paywall that fits) are listed there too.
+  - Icon: store/icon.js draws four options from the scene geometry (docs/design/icon-options.png, each at 60 px on a light and a dark wallpaper). Shipped: "sunny", the disc in sunflower on a cream plate on the deep teal. Written to assets/icon.png, splash-icon.png, android-icon-foreground.png (adaptive background now the same teal), favicon.png, and docs/icon-512.png, apple-touch-icon.png, og-image.png.
+  - Renders: docs/design/light and docs/design/dark, 38 screens each at 393x852 @3x (landscape 852x393), 256 colours; docs/design/scenes-light.png and scenes-dark.png.
+  - Checked: npx tsc --noEmit clean; npm test 37/37.
 - 2026-11-17: 1.0.0 build 1, step 5 of 7: onboarding and paywall.
   - Paywall (src/screens/Paywall.tsx): the engine's (Attendance Tracker 1.0.6) with this app's order from src/offer.ts: Yearly first and preselected with BEST VALUE and "About $0.48 a week" (store price / 52 in the store currency), Lifetime second ("Pay once, keep forever"), Weekly third. Every price and trial length comes from RevenueCat; the trial shows only when RevenueCat says the Apple ID can still get it. The subtitle, the button ("Continue with 3 days free" or "Continue"), "No payment now" and the 3.1.2(c) line follow the selected plan. Restore, Terms of Use (EULA) and Privacy Policy are always on screen. On first launch the close button shows after 3 seconds. After a purchase: the trial reminder (if a trial started and notifications are allowed), then the rating ask when a trial started. Live scenes at the top (rocket, caterpillar, sunset); the free line carries a FREE tag.
   - Dropped from the engine: the Free-mode launch offer (Lifetime at 0) and its LAUNCH OFFER tag, and the Weekly yearly-cost line (only Yearly gets an equivalent, as in 1.0.6).

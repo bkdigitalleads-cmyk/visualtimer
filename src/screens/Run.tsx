@@ -63,8 +63,9 @@ function Run() {
   const icon = (step?.icon ?? look.icon) as IconId | null;
 
   const landscape = width > height || classroom;
+  // Landscape keeps 56 points at the top for the close, lock and classroom buttons.
   const sceneSize = landscape
-    ? Math.min(height - insets.top - insets.bottom - 32, width * 0.5)
+    ? Math.min(height - insets.top - insets.bottom - (classroom ? 72 : 88), width * 0.5)
     : Math.min(width - 40, height * (settings.showDigits ? 0.5 : 0.58));
 
   const close = () => {
@@ -179,7 +180,7 @@ function Run() {
       <StatusBar hidden={classroom} style={theme.isDark ? 'light' : 'dark'} />
       {isRoutine && !classroom ? <StepTrail theme={theme} run={a.run} top={insets.top + 64} /> : null}
       {landscape ? (
-        <View style={[styles.row, { paddingLeft: insets.left + space.xl, paddingRight: insets.right + space.xl, paddingTop: insets.top, paddingBottom: insets.bottom }]}>
+        <View style={[styles.row, { paddingLeft: insets.left + space.xl, paddingRight: insets.right + space.xl, paddingTop: insets.top + (classroom ? 48 : 56), paddingBottom: insets.bottom + space.s }]}>
           <View style={{ alignItems: 'center', justifyContent: 'center' }}>{scene}</View>
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: space.l, paddingLeft: space.xl }}>
             {nameRow}
