@@ -9,6 +9,7 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 const O = await import('../src/offer.ts');
 const U = await import('../src/rules.ts');
 const M = await import('../src/model.ts');
+const G = await import('../src/gates.ts');
 
 const ROOT = new URL('..', import.meta.url).pathname;
 
@@ -188,4 +189,43 @@ test('app.json and eas.json: identity, the three Cowork placeholders, plugins, n
   const pkg = JSON.parse(readFileSync(`${ROOT}package.json`, 'utf8'));
   assert.match(pkg.dependencies.expo, /^~57\./);
   assert.equal(pkg.dependencies['react-native'], '0.86.2');
+});
+
+// ---------- free and Pro ----------
+
+test('gates: free gets the disc, sand and caterpillar, teal, one saved timer; Pro gets everything', () => {
+  const free = M.SCENES.filter((s) => G.canUseScene(s.id, false)).map((s) => s.id);
+  assert.deepEqual(free, ['wedge', 'sand', 'caterpillar']);
+  assert.ok(M.SCENES.length >= 8, 'at least eight scenes');
+  assert.ok(M.SCENES.every((s) => G.canUseScene(s.id, true)));
+  assert.deepEqual(M.COLORS.filter((c) => G.canUseColor(c.id, false)).map((c) => c.id), ['teal']);
+  assert.ok(M.COLORS.every((c) => G.canUseColor(c.id, true)));
+  assert.equal(G.canUseSaved(0, false), true);
+  assert.equal(G.canUseSaved(1, false), false);
+  assert.equal(G.canUseSaved(9, true), true);
+  assert.equal(G.canAddSaved(0, false), true);
+  assert.equal(G.canAddSaved(1, false), false);
+  assert.equal(G.canAddSaved(40, true), true);
+  for (const f of [G.canUseRoutines, G.canUseChildLock, G.canUseClassroom]) {
+    assert.equal(f(false), false);
+    assert.equal(f(true), true);
+  }
+  assert.deepEqual(G.fallbackLook('rocket', 'berry', false), { scene: 'wedge', color: 'teal' });
+  assert.deepEqual(G.fallbackLook('sand', 'teal', false), { scene: 'sand', color: 'teal' });
+  assert.deepEqual(G.fallbackLook('rocket', 'berry', true), { scene: 'rocket', color: 'berry' });
+  // Presets as asked: 1, 2, 5, 10, 15, 20, 30, 45, 60 minutes.
+  assert.deepEqual(M.PRESETS, [1, 2, 5, 10, 15, 20, 30, 45, 60]);
+});
+
+test('sounds: every end sound and the tick and warning exist as real WAV files, short enough for a notification', () => {
+  for (const s of [...M.SOUNDS.filter((x) => x.id !== 'none').map((x) => x.id), 'tick', 'warn']) {
+    const b = readFileSync(`${ROOT}assets/sounds/${s}.wav`);
+    assert.equal(b.toString('ascii', 0, 4), 'RIFF');
+    assert.equal(b.toString('ascii', 8, 12), 'WAVE');
+    const seconds = b.readUInt32LE(40) / b.readUInt32LE(28);
+    assert.ok(seconds > 0.05 && seconds < 30, `${s} is ${seconds} s`);
+  }
+  const app = JSON.parse(readFileSync(`${ROOT}app.json`, 'utf8')).expo;
+  const notif = app.plugins.find((p) => Array.isArray(p) && p[0] === 'expo-notifications')[1];
+  assert.deepEqual(notif.sounds.map((p) => p.replace(/^.*\/|\.wav$/g, '')).sort(), M.SOUNDS.filter((x) => x.id !== 'none').map((x) => x.id).sort());
 });
