@@ -166,7 +166,7 @@ test('app.json and eas.json: identity, the Expo project, RevenueCat key and ASC 
   assert.equal(app.slug, 'visualtimer');
   assert.equal(app.ios.bundleIdentifier, 'com.bwk.visualtimer');
   assert.equal(app.version, '1.0.0');
-  assert.equal(app.ios.buildNumber, '1');
+  assert.equal(app.ios.buildNumber, '2', 'build 2: the hourglass icon');
   assert.equal(app.ios.supportsTablet, false);
   assert.equal(app.orientation, 'default', 'portrait and landscape');
   assert.equal(JSON.parse(readFileSync(`${ROOT}package.json`, 'utf8')).version, app.version);
@@ -234,4 +234,22 @@ test('sounds: every end sound and the tick and warning exist as real WAV files, 
   const app = JSON.parse(readFileSync(`${ROOT}app.json`, 'utf8')).expo;
   const notif = app.plugins.find((p) => Array.isArray(p) && p[0] === 'expo-notifications')[1];
   assert.deepEqual(notif.sounds.map((p) => p.replace(/^.*\/|\.wav$/g, '')).sort(), M.SOUNDS.filter((x) => x.id !== 'none').map((x) => x.id).sort());
+});
+
+test('app icon: the hourglass from store/icon-hourglass.svg, 1024 square with no alpha, and every place that shows the icon made from it', async () => {
+  const svg = readFileSync(`${ROOT}store/icon-hourglass.svg`, 'utf8');
+  assert.match(svg, /^<svg xmlns="http:\/\/www\.w3\.org\/2000\/svg" viewBox="0 0 1024 1024"><rect width="1024" height="1024" fill="#2A9D8F"\/>/);
+  assert.match(svg, /<circle cx="462" cy="716" r="15" fill="#2B2420"\/><circle cx="562" cy="716" r="15" fill="#2B2420"\/>/);
+  const icon = readFileSync(`${ROOT}store/icon.js`, 'utf8');
+  assert.match(icon, /readFileSync\(path\.join\(__dirname, 'icon-hourglass\.svg'\), 'utf8'\)/);
+  assert.match(icon, /const svg = SHIPPED_SVG;/);
+  // PNG header: 1024 by 1024, colour type 2 (RGB, no alpha).
+  const png = readFileSync(`${ROOT}assets/icon.png`);
+  assert.equal(png.readUInt32BE(16), 1024);
+  assert.equal(png.readUInt32BE(20), 1024);
+  assert.equal(png[25], 2, 'RGB with no alpha channel');
+  const app = JSON.parse(readFileSync(`${ROOT}app.json`, 'utf8')).expo;
+  assert.equal(app.icon, './assets/icon.png');
+  assert.equal(app.android.adaptiveIcon.backgroundColor, '#2A9D8F');
+  for (const f of ['index.html', 'privacy.html', 'support.html']) assert.match(readFileSync(`${ROOT}docs/${f}`, 'utf8'), /alt="Visual Timer app icon: a friendly hourglass/);
 });

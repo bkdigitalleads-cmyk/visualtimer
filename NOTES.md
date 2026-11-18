@@ -2,6 +2,16 @@
 
 Newest first. One entry per commit: date, version/build, what changed and why, and how it was checked.
 
+- 2026-11-18: 1.0.0 build 2, app icon is now the friendly hourglass (Brian's choice), replacing the leaf from build 1. Branch claude/timer-icon-hourglass from main after PR 1 merged; build 1 is on TestFlight.
+  - Why: Brian chose a new icon, a friendly hourglass, to replace the leaf.
+  - store/icon-hourglass.svg: the drawing exactly as Brian gave it. store/icon.js now renders every shipped icon file from that file, without changing any shape or color. The four earlier concepts stay only for docs/design/icon-options.png, which now has the hourglass as a fifth panel ("5 hourglass (shipped)") and the leaf as "3 leaf (build 1)".
+  - Ran `node icon.js`, which rewrote assets/icon.png (1024x1024, RGB with no alpha channel, square corners), assets/splash-icon.png (the tile with its corners, as before), assets/android-icon-foreground.png, assets/favicon.png, docs/icon-512.png, docs/apple-touch-icon.png and docs/og-image.png. Then ran `node icon.js options`.
+  - app.json: ios.buildNumber 1 to 2, so the merge produces a new TestFlight build; version stays 1.0.0. android adaptiveIcon backgroundColor #EAF3DD to #2A9D8F, the hourglass tile's teal. Nothing else in the app changed: no source file, scene, screen, sound or text.
+  - docs/index.html, privacy.html, support.html: the icon's alt text now describes the hourglass. docs/design/NOTES.md: the Icon section. CLAUDE.md: the status line.
+  - Screenshots and renders: none shows the app icon, so they are unchanged.
+  - Tests: the build number is 2; the SVG is the one given; icon.js renders from it; icon.png is 1024 square with no alpha; the Android background and the website alt text match.
+  - Checked: npx tsc --noEmit clean; npm test 40/40; assets/icon.png compared with a fresh render of store/icon-hourglass.svg: 0 pixel difference, corner pixel #2A9D8F; looked at the icon, splash, favicon, Open Graph image and icon-options.png.
+  - Merging this PR to main starts the EAS build and submit workflow (one paid build credit) for 1.0.0 build 2. Do not merge without Brian.
 - 2026-11-18: 1.0.0 build 1, Expo project id from Cowork (config only, no build).
   - app.json extra.eas.projectId is now a6259bcd-f368-4505-a4ea-23e52568b6b9, the Expo project bkdeveloper123/visualtimer. app.json owner (bkdeveloper123) and slug (visualtimer) already matched it; unchanged.
   - That was the last Cowork placeholder. The config test now checks the project id, owner and slug, and that no TODO_COWORK placeholder is left anywhere in the repo (json, ts, tsx, js, mjs, md, html, yml, css, txt). CLAUDE.md updated to match.
