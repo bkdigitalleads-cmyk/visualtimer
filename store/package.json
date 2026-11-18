@@ -1,0 +1,9 @@
+{
+  "name": "store",
+  "private": true,
+  "description": "Icon, sound and screenshot generators (node icon.js, node sounds.js, node screenshots.js). Not part of the app bundle.",
+  "dependencies": {
+    "opentype.js": "^1.3.4",
+    "sharp": "^0.35.3"
+  }
+}
