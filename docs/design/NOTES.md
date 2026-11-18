@@ -59,11 +59,11 @@ The tells we looked for, from the portfolio's earlier passes: stock emoji as ico
 Four options in `icon-options.png`, each large and at 60 px on a light and a dark wallpaper, drawn by `store/icon.js` from the app's own scene geometry (`node icon.js options`; `node icon.js` writes assets/ and the website images).
 
 1. plate: the color disc, three quarters left, teal on a cream plate, on oat. Clear, but a pale tile disappears among white app icons.
-2. sunny (shipped): the same disc in sunflower on a cream plate, on the deep teal. The strongest at 60 px on both wallpapers, warm rather than clinical, and the teal is the app's own main-action color.
-3. leaf: the bitten leaf with the caterpillar. Charming large, but at 60 px the caterpillar is a dot.
+2. sunny: the same disc in sunflower on a cream plate, on the deep teal. The strongest disc at 60 px, warm rather than clinical.
+3. leaf (shipped, Brian's pick on Nov 18): the bitten leaf with the caterpillar looking out, on pale green. Picked because it stands apart from the disc icons other timers use in search results; a disc icon would sit in a row of discs. It is the app's free caterpillar scene, so the icon is the product. At 60 px the caterpillar is small; the leaf's green and its bitten edge carry the shape.
 4. jar: the sand jar. Reads as an hourglass, which says "timer" but is the most generic of the four.
 
-No clock face, no numbers, no hands, no red disc. The splash is the tile with its corners on the app's background, in light and dark.
+No clock face, no numbers, no hands, no red disc. The splash is the leaf tile with its corners on the app's background, in light and dark. The Android adaptive icon uses the same art on the tile's pale green (#EAF3DD). Sunny shipped in the first draft of 1.0.0 (Nov 17) and was replaced before any build.
 
 ## Renders
 

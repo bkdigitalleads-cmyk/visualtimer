@@ -2,6 +2,13 @@
 
 Newest first. One entry per commit: date, version/build, what changed and why, and how it was checked.
 
+- 2026-11-18: 1.0.0 build 1, app icon is now concept 3, the caterpillar on a leaf (Brian's decision). Still unreleased, no build yet, so no version or build number change.
+  - Why: the leaf stands apart from the disc icons other timers use in search results.
+  - store/icon.js: CHOSEN is now leaf (the art is unchanged from the concept Brian saw in docs/design/icon-options.png); the tile's pale green is LEAF_BG #EAF3DD. Re-ran `node icon.js options` (label "3 leaf (shipped)") and `node icon.js`, which rewrote assets/icon.png, assets/splash-icon.png, assets/android-icon-foreground.png, assets/favicon.png, docs/icon-512.png, docs/apple-touch-icon.png and docs/og-image.png.
+  - app.json: android adaptiveIcon backgroundColor #1F7F74 to #EAF3DD to match the leaf tile. The splash keeps the app's oat and warm-night backgrounds; plugins untouched.
+  - docs/index.html, privacy.html, support.html: the icon's alt text now describes the leaf. docs/design/NOTES.md: the Icon section records the pick and why.
+  - Screenshots and renders: none of them shows the app icon (they are app screens and scenes), so store/screenshots and docs/design/light and dark are unchanged.
+  - Checked: npx tsc --noEmit clean; npm test 39/39; npx expo config --type introspect still shows ios.entitlements {}, no NSMicrophoneUsageDescription, no UIBackgroundModes; looked at the new icon, splash and Open Graph image.
 - 2026-11-17: 1.0.0 build 1, step 7 of 7: website, store text, screenshots.
   - docs/ (GitHub Pages from the docs folder): index.html (what it does, made for children, free and Pro with prices, six screenshots), privacy.html, support.html, style.css, robots.txt, sitemap.xml, icon and Open Graph images. The two fonts are served from docs/fonts with their OFL licences, so the site makes no third-party requests and has no scripts. The privacy page says what the App Store label says: Purchases (purchase history) through RevenueCat, not linked to you, and nothing else collected.
   - store/metadata.md: name, subtitle, keywords (96/100: autism,toddler,preschool,classroom,teacher,routine,schedule,hourglass,sand,bedtime,therapy,child; no word from the name or subtitle), promotional text (157/170), description, the products table, App Privacy, screenshot captions and App Review notes. Suggested category Education, secondary Productivity, not the Kids category (reasons in the review notes); app.json LSApplicationCategoryType now education to match.

@@ -13,8 +13,10 @@ const path = require('path');
 //   leaf   - the bitten leaf with the caterpillar's head, on soft green
 //   jar    - the sand jar half full, on oat
 // No clock numbers, no hands, no red disc on a white face.
-// Chosen: sunny (see docs/design/NOTES.md).
-const CHOSEN = 'sunny';
+// Chosen: leaf, Brian's pick on Nov 18: it stands apart from the disc icons
+// other timers use in search results (see docs/design/NOTES.md).
+const CHOSEN = 'leaf';
+const LEAF_BG = '#EAF3DD';
 
 const ROOT = path.join(__dirname, '..');
 const FRED = opentype.loadSync(ROOT + '/assets/fonts/Fredoka-SemiBold.ttf');
@@ -51,7 +53,7 @@ const art = {
   leaf: () => {
     const s = 1024 / 300;
     return `<svg width="1024" height="1024" xmlns="http://www.w3.org/2000/svg">
-      <rect width="1024" height="1024" fill="#EAF3DD"/>
+      <rect width="1024" height="1024" fill="${LEAF_BG}"/>
       <g transform="translate(-330 -330) scale(${s * 1.55})">
         <path d="${G.leafPath(0.62)}" fill="#6FB552"/>
         <path d="M52 170L${G.leafEdgeX(0.62)} 170" stroke="#4F8F3A" stroke-width="4" stroke-linecap="round"/>
@@ -77,7 +79,7 @@ const art = {
     </svg>`,
 };
 
-const LABELS = { plate: '1  plate', sunny: '2  sunny (shipped)', leaf: '3  leaf', jar: '4  jar' };
+const LABELS = { plate: '1  plate', sunny: '2  sunny', leaf: '3  leaf (shipped)', jar: '4  jar' };
 
 const textPath = (font, text, size, x, y) => font.getPath(text, x, y, size).toPathData(2);
 
@@ -117,7 +119,7 @@ async function options() {
 
 async function write() {
   const svg = art[CHOSEN]();
-  await sharp(await png(svg, 1024)).flatten({ background: DEEP }).png().toFile(ROOT + '/assets/icon.png');
+  await sharp(await png(svg, 1024)).flatten({ background: LEAF_BG }).png().toFile(ROOT + '/assets/icon.png');
   // Splash: the tile itself, with its corners, on the app's background (light and dark, set in app.json).
   await sharp(await rounded(svg, 512)).png().toFile(ROOT + '/assets/splash-icon.png');
   await sharp(await png(svg, 1024)).png().toFile(ROOT + '/assets/android-icon-foreground.png');

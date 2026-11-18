@@ -19,7 +19,7 @@
     "android": {
       "package": "com.bwk.visualtimer",
       "adaptiveIcon": {
-        "backgroundColor": "#1F7F74",
+        "backgroundColor": "#EAF3DD",
         "foregroundImage": "./assets/android-icon-foreground.png"
       },
       "predictiveBackGestureEnabled": false
