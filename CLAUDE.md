@@ -6,13 +6,13 @@ Part of Brian's iOS app portfolio (seller bkdigitalleads-cmyk). Expo SDK 57, Rea
 
 - App Store name: "Visual Timer: Kids Timer". Subtitle: "Countdown Clock, ADHD & Focus". Home screen and in-app name: "Visual Timer". Bundle ID com.bwk.visualtimer. Expo slug visualtimer, owner bkdeveloper123. GitHub: bkdigitalleads-cmyk/visualtimer. iPhone only, portrait and landscape.
 - Not in the store yet. Version 1.0.0 build 1 is on branch claude/timer-1.0.0 (PR, not merged).
-- Set up from Cowork (Nov 17, 2026): app.json `extra.revenueCatApiKeyIos` (the public SDK key, starts with `appl_`) and eas.json `ascAppId` 6835862580. One placeholder is left: app.json `extra.eas.projectId` holds a `TODO_COWORK_...` value until the Expo project exists. The app runs with purchases off whenever the key does not start with `appl_`.
+- Set up from Cowork (Nov 17, 2026): app.json `extra.revenueCatApiKeyIos` (the public SDK key, starts with `appl_`) and eas.json `ascAppId` 6835862580. Nov 18: app.json `extra.eas.projectId` a6259bcd-f368-4505-a4ea-23e52568b6b9 (Expo project bkdeveloper123/visualtimer, matching `owner` and `slug`). No Cowork placeholder is left, and a test keeps it that way. The app runs with purchases off whenever the key does not start with `appl_`.
 - App Store Connect and RevenueCat: visualtimer_pro_yearly (3 day free trial), visualtimer_pro_weekly (no trial), visualtimer_pro_lifetime; entitlement `pro`; offering `default` with $rc_annual, $rc_weekly and $rc_lifetime.
 - What it is: a visual countdown timer for young children, used by parents, teachers and therapists, including families dealing with ADHD and autism. A child who cannot read a clock sees the time disappear in a scene. Offline, no accounts, no servers, no ads, no analytics.
 
 ## How shipping works (read before every push)
 
-- A push to `main` that touches app.json, eas.json, package*.json, App.tsx, index.ts, src/ or assets/ starts an EAS workflow (.eas/workflows/deploy.yml) once the Expo project is connected. It builds iOS in the cloud and uploads the build to App Store Connect / TestFlight. Every such push costs a paid build credit.
+- A push to `main` that touches app.json, eas.json, package*.json, App.tsx, index.ts, src/ or assets/ starts an EAS workflow (.eas/workflows/deploy.yml) now that the Expo project is connected. It builds iOS in the cloud and uploads the build to App Store Connect / TestFlight. Every such push costs a paid build credit.
 - Never merge to `main` without Brian. Work on a branch and open a PR.
 - Pushes that only change Markdown files, store/ or docs/ do not build.
 - Version numbers are local (`appVersionSource: local`, no auto-increment). Before any push that builds: raise `ios.buildNumber` in app.json by 1, and raise `version` (and package.json `version`) when it will become a new App Store release. A build number that was already used makes the upload fail.

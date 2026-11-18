@@ -160,7 +160,7 @@ test('words: durations and the clock read the way a parent says them', () => {
 
 // ---------- config ----------
 
-test('app.json and eas.json: identity, the RevenueCat key and ASC id from Cowork, one placeholder left, plugins, no push, no microphone', () => {
+test('app.json and eas.json: identity, the Expo project, RevenueCat key and ASC id from Cowork, no placeholder left, plugins, no push, no microphone', () => {
   const app = JSON.parse(readFileSync(`${ROOT}app.json`, 'utf8')).expo;
   assert.equal(app.name, 'Visual Timer');
   assert.equal(app.slug, 'visualtimer');
@@ -183,11 +183,14 @@ test('app.json and eas.json: identity, the RevenueCat key and ASC id from Cowork
   assert.match(app.extra.revenueCatApiKeyIos, /^appl_/);
   assert.equal(app.extra.revenueCatApiKeyIos, 'appl_YECdKqrHoSHtNUaIEPslGLkXDiR');
   assert.equal(eas.submit.production.ios.ascAppId, '6835862580');
-  // The Expo project is not created yet: its id is the one placeholder left, in one place.
-  assert.match(app.extra.eas.projectId, /^TODO_COWORK_[A-Z_]+$/);
-  const files = walk(ROOT, ['.json', '.ts', '.tsx', '.js', '.mjs', '.md', '.html', '.yml']).filter((f) => !f.endsWith('package-lock.json'));
+  // From Cowork (Nov 18): the Expo project bkdeveloper123/visualtimer.
+  assert.equal(app.extra.eas.projectId, 'a6259bcd-f368-4505-a4ea-23e52568b6b9');
+  assert.equal(app.owner, 'bkdeveloper123');
+  assert.equal(app.slug, 'visualtimer');
+  // No Cowork placeholder is left anywhere in the repo.
+  const files = walk(ROOT, ['.json', '.ts', '.tsx', '.js', '.mjs', '.md', '.html', '.yml', '.css', '.txt']).filter((f) => !f.endsWith('package-lock.json'));
   const found = files.flatMap((f) => readFileSync(f, 'utf8').match(/TODO_COWORK_[A-Z][A-Z_]*/g) ?? []);
-  assert.deepEqual(found, [app.extra.eas.projectId]);
+  assert.deepEqual(found, []);
   // Package versions: SDK 57 on React Native 0.86.2, like the engine.
   const pkg = JSON.parse(readFileSync(`${ROOT}package.json`, 'utf8'));
   assert.match(pkg.dependencies.expo, /^~57\./);

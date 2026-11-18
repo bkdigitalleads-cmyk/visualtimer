@@ -2,6 +2,11 @@
 
 Newest first. One entry per commit: date, version/build, what changed and why, and how it was checked.
 
+- 2026-11-18: 1.0.0 build 1, Expo project id from Cowork (config only, no build).
+  - app.json extra.eas.projectId is now a6259bcd-f368-4505-a4ea-23e52568b6b9, the Expo project bkdeveloper123/visualtimer. app.json owner (bkdeveloper123) and slug (visualtimer) already matched it; unchanged.
+  - That was the last Cowork placeholder. The config test now checks the project id, owner and slug, and that no TODO_COWORK placeholder is left anywhere in the repo (json, ts, tsx, js, mjs, md, html, yml, css, txt). CLAUDE.md updated to match.
+  - Merging this PR to main will now start the EAS build and submit workflow, which uses a paid build credit. Do not merge without Brian.
+  - Checked: npx tsc --noEmit clean; npm test 39/39; npx expo config shows the project id, owner and slug; repo-wide search finds no TODO_COWORK value.
 - 2026-11-18: 1.0.0 build 1, app icon is now concept 3, the caterpillar on a leaf (Brian's decision). Still unreleased, no build yet, so no version or build number change.
   - Why: the leaf stands apart from the disc icons other timers use in search results.
   - store/icon.js: CHOSEN is now leaf (the art is unchanged from the concept Brian saw in docs/design/icon-options.png); the tile's pale green is LEAF_BG #EAF3DD. Re-ran `node icon.js options` (label "3 leaf (shipped)") and `node icon.js`, which rewrote assets/icon.png, assets/splash-icon.png, assets/android-icon-foreground.png, assets/favicon.png, docs/icon-512.png, docs/apple-touch-icon.png and docs/og-image.png.
