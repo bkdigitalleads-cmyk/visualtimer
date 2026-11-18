@@ -56,14 +56,17 @@ The tells we looked for, from the portfolio's earlier passes: stock emoji as ico
 
 ## Icon
 
-Four options in `icon-options.png`, each large and at 60 px on a light and a dark wallpaper, drawn by `store/icon.js` from the app's own scene geometry (`node icon.js options`; `node icon.js` writes assets/ and the website images).
+The shipped icon, from build 2, is a friendly hourglass: a pale glass with cream caps on a teal tile, golden sand running from the top bulb into the bottom one, and a small smiling face in the sand below. Brian chose it to replace the leaf. The drawing is kept exactly as he gave it in `store/icon-hourglass.svg`, and `store/icon.js` renders the shipped files from that file without changing any shape or color (`node icon.js`). A test checks that `assets/icon.png` is a 1024 square in RGB with no alpha channel. It has square corners, because iOS rounds them itself.
+
+`icon-options.png` shows every option, each large and at 60 px on a light and a dark wallpaper (`node icon.js options`). The first four are drawn from the app's own scene geometry:
 
 1. plate: the color disc, three quarters left, teal on a cream plate, on oat. Clear, but a pale tile disappears among white app icons.
-2. sunny: the same disc in sunflower on a cream plate, on the deep teal. The strongest disc at 60 px, warm rather than clinical.
-3. leaf (shipped, Brian's pick on Nov 18): the bitten leaf with the caterpillar looking out, on pale green. Picked because it stands apart from the disc icons other timers use in search results; a disc icon would sit in a row of discs. It is the app's free caterpillar scene, so the icon is the product. At 60 px the caterpillar is small; the leaf's green and its bitten edge carry the shape.
-4. jar: the sand jar. Reads as an hourglass, which says "timer" but is the most generic of the four.
+2. sunny: the same disc in sunflower on a cream plate, on the deep teal. The strongest disc at 60 px, warm rather than clinical. It was the first draft of 1.0.0 (Nov 17) and was replaced before any build.
+3. leaf: the bitten leaf with the caterpillar looking out, on pale green. Brian's pick on Nov 18, because it stands apart from the disc icons other timers use in search results. It shipped in build 1 (TestFlight). At 60 px the caterpillar was small.
+4. jar: the sand jar. Reads as an hourglass, which says "timer" but was the most generic of the four.
+5. hourglass (shipped from build 2): from `store/icon-hourglass.svg`. The teal tile and golden sand read clearly at 60 px on both wallpapers, and the face keeps it warm and made for children.
 
-No clock face, no numbers, no hands, no red disc. The splash is the leaf tile with its corners on the app's background, in light and dark. The Android adaptive icon uses the same art on the tile's pale green (#EAF3DD). Sunny shipped in the first draft of 1.0.0 (Nov 17) and was replaced before any build.
+No clock face, no numbers, no hands, no red disc. The splash is the hourglass tile with its corners on the app's background, in light and dark. The Android adaptive icon uses the same art on the tile's teal (#2A9D8F). The website's icon, touch icon and Open Graph image come from the same file.
 
 ## Renders
 

@@ -10,7 +10,7 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.bwk.visualtimer",
-      "buildNumber": "1",
+      "buildNumber": "2",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "LSApplicationCategoryType": "public.app-category.education"
@@ -19,7 +19,7 @@
     "android": {
       "package": "com.bwk.visualtimer",
       "adaptiveIcon": {
-        "backgroundColor": "#EAF3DD",
+        "backgroundColor": "#2A9D8F",
         "foregroundImage": "./assets/android-icon-foreground.png"
       },
       "predictiveBackGestureEnabled": false

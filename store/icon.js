@@ -1,21 +1,24 @@
 const sharp = require('sharp');
 const opentype = require('opentype.js');
+const fs = require('fs');
 const path = require('path');
 
-// Visual Timer icon, in the app's "kitchen table" palette. Every shape comes
-// from the app's own scene geometry (../src/scenes/geometry.ts), so the icon
-// is the product. Four options for docs/design/icon-options.png
-// (`node icon.js options`), each big and at 60 px on a light and a dark
-// wallpaper; the chosen one is written to ../assets and the website
-// (`node icon.js`).
-//   plate  - the color disc, three quarters left, teal on a cream plate, on oat
-//   sunny  - the same disc in sunflower on a cream plate, on the deep teal
-//   leaf   - the bitten leaf with the caterpillar's head, on soft green
-//   jar    - the sand jar half full, on oat
+// Visual Timer icon. The shipped icon is the friendly hourglass in
+// icon-hourglass.svg (Brian's pick for build 2), rendered exactly as that
+// file draws it: no shape or color is changed here. `node icon.js` writes it
+// to ../assets and the website. The four earlier concepts, drawn from the
+// app's own scene geometry (../src/scenes/geometry.ts), stay in
+// docs/design/icon-options.png next to it (`node icon.js options`), each big
+// and at 60 px on a light and a dark wallpaper:
+//   plate     - the color disc, three quarters left, teal on a cream plate, on oat
+//   sunny     - the same disc in sunflower on a cream plate, on the deep teal
+//   leaf      - the bitten leaf with the caterpillar's head, on soft green (shipped in build 1)
+//   jar       - the sand jar half full, on oat
+//   hourglass - the shipped icon, from icon-hourglass.svg
 // No clock numbers, no hands, no red disc on a white face.
-// Chosen: leaf, Brian's pick on Nov 18: it stands apart from the disc icons
-// other timers use in search results (see docs/design/NOTES.md).
-const CHOSEN = 'leaf';
+const SHIPPED_SVG = fs.readFileSync(path.join(__dirname, 'icon-hourglass.svg'), 'utf8');
+/** The hourglass tile's own teal, for the places that need a solid color behind it. */
+const SHIPPED_BG = '#2A9D8F';
 const LEAF_BG = '#EAF3DD';
 
 const ROOT = path.join(__dirname, '..');
@@ -77,9 +80,10 @@ const art = {
         <path d="M110 232Q150 200 190 232Z" fill="#E8B04B"/>
       </g>
     </svg>`,
+  hourglass: () => SHIPPED_SVG,
 };
 
-const LABELS = { plate: '1  plate', sunny: '2  sunny', leaf: '3  leaf (shipped)', jar: '4  jar' };
+const LABELS = { plate: '1  plate', sunny: '2  sunny', leaf: '3  leaf (build 1)', jar: '4  jar', hourglass: '5  hourglass (shipped)' };
 
 const textPath = (font, text, size, x, y) => font.getPath(text, x, y, size).toPathData(2);
 
@@ -118,8 +122,9 @@ async function options() {
 }
 
 async function write() {
-  const svg = art[CHOSEN]();
-  await sharp(await png(svg, 1024)).flatten({ background: LEAF_BG }).png().toFile(ROOT + '/assets/icon.png');
+  const svg = SHIPPED_SVG;
+  // The App Store icon: 1024 square, no alpha channel, no rounded corners (iOS rounds it).
+  await sharp(await png(svg, 1024)).flatten({ background: SHIPPED_BG }).removeAlpha().png().toFile(ROOT + '/assets/icon.png');
   // Splash: the tile itself, with its corners, on the app's background (light and dark, set in app.json).
   await sharp(await rounded(svg, 512)).png().toFile(ROOT + '/assets/splash-icon.png');
   await sharp(await png(svg, 1024)).png().toFile(ROOT + '/assets/android-icon-foreground.png');
