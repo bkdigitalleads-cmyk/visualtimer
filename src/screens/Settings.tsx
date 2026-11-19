@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Alert, Linking, Text, View } from 'react-native';
 import Constants from 'expo-constants';
 import { useTheme, space, type, Theme } from '../theme';
@@ -12,6 +12,9 @@ import { SOUNDS } from '../model';
 import { PRIVACY_URL, SUPPORT_EMAIL, SUPPORT_MAIL_URL, SUPPORT_URL } from '../links';
 import { Glyph } from '../ui/Glyph';
 import { Card, Label, MainButton, ProTag, Row, Sheet, ToggleRow } from '../ui/Kit';
+import LockSheet from '../ui/LockSheet';
+import { flagGet, flagSet } from '../store';
+import { autoLockSwitch, LOCK_EXPLAINED_FLAG } from '../rules';
 
 /**
  * Settings, for grown-ups only: it opens after holding the gear for two
@@ -24,6 +27,12 @@ export default function Settings({ visible, onClose, onReplayOnboarding }: { vis
   const [taps, setTaps] = useState(0);
   const [tools, setTools] = useState(false);
   const [restoring, setRestoring] = useState(false);
+  // The one-time child lock explanation, the same one the lock on a running timer shows.
+  const [explain, setExplain] = useState(false);
+  const explained = useRef(false);
+  useEffect(() => {
+    if (visible) flagGet(LOCK_EXPLAINED_FLAG).then((v) => (explained.current = v === '1'));
+  }, [visible]);
 
   useEffect(() => {
     if (taps < 7) return;
@@ -69,8 +78,17 @@ export default function Settings({ visible, onClose, onReplayOnboarding }: { vis
           />
         ))}
       </Card>
+      <Card theme={theme} style={{ marginTop: space.m }}>
+        <ToggleRow
+          theme={theme}
+          title="Play sound when the phone is on silent"
+          value={settings.playOnSilent}
+          onChange={(playOnSilent) => updateSettings({ playOnSilent })}
+          last
+        />
+      </Card>
       <Text style={[type.small, { color: theme.inkSoft, marginTop: space.s, marginHorizontal: space.xs }]}>
-        Tap one to hear it. It also plays when the phone is locked, if notifications are allowed and the ring switch is on.
+        Tap a sound to hear it. While Visual Timer is open, the end sound plays even with the ring switch on silent, unless you turn this off. With the phone locked or another app open, the end comes as a notification instead, which needs notifications allowed for Visual Timer and follows the ring switch.
       </Text>
 
       <Label theme={theme}>While a timer runs</Label>
@@ -86,9 +104,14 @@ export default function Settings({ visible, onClose, onReplayOnboarding }: { vis
           value={settings.autoLock && canUseChildLock(isPro)}
           locked={!canUseChildLock(isPro)}
           last
-          onChange={async (autoLock) => {
-            if (autoLock && !canUseChildLock(isPro) && !(await askPro())) return;
-            updateSettings({ autoLock });
+          onChange={async (on) => {
+            const step = autoLockSwitch({ on, isPro: canUseChildLock(isPro), explained: explained.current });
+            if (step === 'set') return updateSettings({ autoLock: on });
+            if (step === 'explain') return setExplain(true);
+            if (!(await askPro())) return;
+            // Bought from here: the explanation first, unless it was already seen.
+            if (explained.current) updateSettings({ autoLock: true });
+            else setTimeout(() => setExplain(true), 150);
           }}
         />
       </Card>
@@ -163,6 +186,18 @@ export default function Settings({ visible, onClose, onReplayOnboarding }: { vis
           </Card>
         </>
       ) : null}
+      <LockSheet
+        theme={theme}
+        visible={explain}
+        primaryLabel="Turn on"
+        onPrimary={() => {
+          flagSet(LOCK_EXPLAINED_FLAG, '1');
+          explained.current = true;
+          setExplain(false);
+          updateSettings({ autoLock: true });
+        }}
+        onNotNow={() => setExplain(false)}
+      />
     </Sheet>
   );
 }

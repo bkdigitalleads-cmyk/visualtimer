@@ -3,30 +3,36 @@ import { PanResponder, View } from 'react-native';
 import Svg, { Circle, Path } from 'react-native-svg';
 import * as Haptics from 'expo-haptics';
 import { Theme } from '../theme';
+import { durationWords, dialFill } from '../model';
 
 /**
  * Set the minutes by turning: one full turn is 60 minutes, starting at
- * twelve o'clock. The colored arc is the time picked. It stops at 1 and at
- * 60 instead of wrapping round, and gives a small tick each minute. The
- * scene sits in the middle (children).
+ * twelve o'clock. The colored arc is the time picked, whatever it is: 30
+ * seconds is a sliver, 2 min 30 sec a little more than 2 minutes, and
+ * anything over an hour shows the ring full. Turning always sets whole
+ * minutes from 1 to 60. It stops at 1 and at 60 instead of wrapping round,
+ * and gives a small tick each minute. The scene sits in the middle.
  */
 export default function Dial({
   theme,
   size,
-  minutes,
+  seconds,
   onChange,
   children,
 }: {
   theme: Theme;
   size: number;
-  minutes: number;
+  /** The time set, in seconds (any value). */
+  seconds: number;
+  /** Called with whole minutes, 1 to 60. */
   onChange: (m: number) => void;
   children?: React.ReactNode;
 }) {
   const stroke = 16;
   const r = size / 2 - stroke / 2 - 6;
   const c = size / 2;
-  const value = Math.max(0, Math.min(60, minutes));
+  // In minutes, fractions kept, so the arc matches any time; over an hour shows full.
+  const value = dialFill(seconds) * 60;
   const last = useRef(value);
   last.current = value;
 
@@ -77,11 +83,12 @@ export default function Dial({
       accessible
       accessibilityRole="adjustable"
       accessibilityLabel="Minutes"
-      accessibilityValue={{ text: `${value} minute${value === 1 ? '' : 's'}` }}
+      accessibilityValue={{ text: durationWords(seconds) }}
       accessibilityActions={[{ name: 'increment' }, { name: 'decrement' }]}
       onAccessibilityAction={(e) => {
-        if (e.nativeEvent.actionName === 'increment') onChange(Math.min(60, value + 1));
-        if (e.nativeEvent.actionName === 'decrement') onChange(Math.max(1, value - 1));
+        // To the next whole minute up or down: 2 min 30 sec goes to 3 or 2.
+        if (e.nativeEvent.actionName === 'increment') onChange(Math.min(60, Math.floor(value) + 1));
+        if (e.nativeEvent.actionName === 'decrement') onChange(Math.max(1, Math.ceil(value) - 1));
       }}
     >
       <Svg width={size} height={size} style={{ position: 'absolute' }}>

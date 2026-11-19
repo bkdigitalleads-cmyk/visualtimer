@@ -1,9 +1,11 @@
 /**
  * The app's own sounds (made by store/sounds.js): five gentle end sounds,
  * a soft tick and the one-minute warning. They play alongside music or a
- * podcast (mixWithOthers) and also with the ring switch on silent, the way
- * a kitchen timer would; "No sound" is one of the end sound choices.
- * Never throws: a sound that cannot play is skipped.
+ * podcast (mixWithOthers). While the app is open they also play with the
+ * ring switch on silent, the same as the iPhone's own timer, unless the
+ * parent turns off Settings' "Play sound when the phone is on silent"
+ * (playsInSilentMode follows that switch). "No sound" is one of the end
+ * sound choices. Never throws: a sound that cannot play is skipped.
  */
 import { createAudioPlayer, setAudioModeAsync, AudioPlayer } from 'expo-audio';
 import type { SoundId } from './model';
@@ -23,13 +25,24 @@ type Name = SoundFile;
 
 const players: Partial<Record<Name, AudioPlayer>> = {};
 let modeSet = false;
+let playOnSilent = true;
+
+/** Settings' "Play sound when the phone is on silent". Applies at once if the session is already set up. */
+export function setPlayOnSilent(on: boolean): void {
+  if (on === playOnSilent) return;
+  playOnSilent = on;
+  if (modeSet) {
+    modeSet = false;
+    ensureMode();
+  }
+}
 
 async function ensureMode(): Promise<void> {
   if (modeSet) return;
   modeSet = true;
   try {
     await setAudioModeAsync({
-      playsInSilentMode: true,
+      playsInSilentMode: playOnSilent,
       interruptionMode: 'mixWithOthers',
       shouldPlayInBackground: false,
       allowsRecording: false,

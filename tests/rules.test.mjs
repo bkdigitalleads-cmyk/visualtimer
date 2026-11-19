@@ -29,7 +29,8 @@ test('copy: no em dashes or exclamation marks, and none of the stock words, in t
     const s = /\.(ts|tsx)$/.test(f) ? readable(raw) : raw.replace(/<!--[\s\S]*?-->|<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/g, '');
     const text = s.replace(/<[^>]+>/g, ' ');
     assert.ok(!/[A-Za-z]!(\s|$|['"`<)])/.test(text), `exclamation mark in ${f}`);
-    for (const w of [/\bunlock(?!ing|ed)\b/i, /\bpremium\b/i, /\bseamless/i, /\beffortless/i, /\belevate/i, /\bsupercharge/i, /\bwelcome\b/i, /\blet's\b/i, /\bmagic(al)?\b/i]) {
+    // "to unlock" is the child lock instruction (hold a corner to unlock), not sales copy; "Unlock all scenes" still fails.
+    for (const w of [/(?<!to )\bunlock(?!ing|ed)\b/i, /\bpremium\b/i, /\bseamless/i, /\beffortless/i, /\belevate/i, /\bsupercharge/i, /\bwelcome\b/i, /\blet's\b/i, /\bmagic(al)?\b/i]) {
       assert.equal(text.match(w), null, `${w} in ${f}`);
     }
   }

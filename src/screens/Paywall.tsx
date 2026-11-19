@@ -113,17 +113,6 @@ export default function PaywallModal({ onboarding = false }: { onboarding?: bool
     <Modal visible={paywallVisible} animationType="slide" presentationStyle="pageSheet" onRequestClose={() => canClose && hidePaywall()} supportedOrientations={['portrait', 'landscape']}>
       <View style={{ flex: 1, backgroundColor: theme.bg }}>
         <ScrollView contentContainerStyle={styles.scroll}>
-          {/* Holds its space while hidden so nothing jumps when the close button appears. */}
-          <Tap
-            onPress={hidePaywall}
-            disabled={!canClose}
-            hitSlop={12}
-            style={[styles.close, { opacity: canClose ? 1 : 0, backgroundColor: theme.raised }]}
-            accessibilityLabel="Close"
-            accessibilityElementsHidden={!canClose}
-          >
-            <Glyph name="close" color={theme.inkSoft} size={18} weight={2.4} />
-          </Tap>
 
           <View style={styles.scenes} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
             <Scene id="rocket" f={0.55} t={1.3} color={colorHex('teal')} dark={theme.isDark} size={62} />
@@ -238,15 +227,26 @@ export default function PaywallModal({ onboarding = false }: { onboarding?: bool
             </Text>
           </View>
         </View>
+        {/* Pinned in the top right corner, above the content, so it never scrolls away. Hidden for 3 seconds on first launch only. */}
+        <Tap
+          onPress={hidePaywall}
+          disabled={!canClose}
+          hitSlop={12}
+          style={[styles.close, { opacity: canClose ? 1 : 0, backgroundColor: theme.raised }]}
+          accessibilityLabel="Close"
+          accessibilityElementsHidden={!canClose}
+        >
+          <Glyph name="close" color={theme.inkSoft} size={18} weight={2.4} />
+        </Tap>
       </View>
     </Modal>
   );
 }
 
 const styles = StyleSheet.create({
-  scroll: { paddingHorizontal: space.xl, paddingTop: space.m, paddingBottom: space.xl },
-  close: { alignSelf: 'flex-end', width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center' },
-  scenes: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: space.m, marginBottom: space.m, marginTop: -space.m },
+  scroll: { paddingHorizontal: space.xl, paddingTop: space.xl, paddingBottom: space.xl },
+  close: { position: 'absolute', top: space.m, right: space.l, zIndex: 10, width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center' },
+  scenes: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: space.m, marginBottom: space.m },
   tick: { width: 26, height: 26, borderRadius: 13, alignItems: 'center', justifyContent: 'center', marginTop: 0 },
   tag: { borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2 },
   tagText: { fontFamily: 'Nunito-Bold', fontSize: 10, letterSpacing: 0.6 },

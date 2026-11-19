@@ -112,16 +112,75 @@ export const SOUNDS: { id: SoundId; name: string }[] = [
   { id: 'none', name: 'No sound' },
 ];
 
-/** Quick picks on the timer screen, in minutes. */
-export const PRESETS = [1, 2, 5, 10, 15, 20, 30, 45, 60];
+/** Quick picks on the timer screen and in the editors, in seconds: 30 sec, then 1 to 60 minutes. */
+export const QUICK_PICKS: { seconds: number; label: string; sub: string }[] = [
+  { seconds: 30, label: '30', sub: 'sec' },
+  ...[1, 2, 5, 10, 15, 20, 30, 45, 60].map((m) => ({ seconds: m * 60, label: String(m), sub: 'min' })),
+];
 
-/** The dial and the step editor go from 10 seconds to 2 hours. */
-export const MIN_SECONDS = 10;
-export const MAX_SECONDS = 2 * 60 * 60;
+/**
+ * The quick pick that matches a time exactly, or null, in which case the
+ * Custom chip is the one highlighted.
+ */
+export function quickPickFor(seconds: number): number | null {
+  const i = QUICK_PICKS.findIndex((p) => p.seconds === seconds);
+  return i < 0 ? null : i;
+}
+
+/**
+ * Any time a parent can set: 5 seconds up to 4 hours (the timer engine's
+ * MAX_TOTAL_MS). Custom times are free for everyone. Stored values are read
+ * with the same limits, so older saved times (10 seconds to 2 hours) still fit.
+ */
+export const MIN_SECONDS = 5;
+export const MAX_SECONDS = 4 * 60 * 60;
 
 export function clampSeconds(s: number): number {
   if (!Number.isFinite(s)) return 5 * 60;
   return Math.max(MIN_SECONDS, Math.min(MAX_SECONDS, Math.round(s)));
+}
+
+export interface HMS {
+  h: number;
+  m: number;
+  s: number;
+}
+
+export function splitHMS(totalSeconds: number): HMS {
+  const t = Math.max(0, Math.round(totalSeconds));
+  return { h: Math.floor(t / 3600), m: Math.floor((t % 3600) / 60), s: t % 60 };
+}
+
+export function joinHMS(v: HMS): number {
+  return v.h * 3600 + v.m * 60 + v.s;
+}
+
+/** How far one press of plus or minus moves each part of the custom time. */
+export const HMS_STEP: Record<keyof HMS, number> = { h: 1, m: 1, s: 5 };
+
+/**
+ * One press of plus (+1) or minus (-1) on hours, minutes or seconds in the
+ * custom time sheet. Minutes run 0 to 59 and seconds 0 to 55 in steps of 5
+ * (an odd value snaps to the next step), each part stays where it is at its
+ * ends rather than wrapping, and the whole stays between 0 and 4 hours.
+ * The sheet's Done clamps to at least 5 seconds.
+ */
+export function stepHMS(totalSeconds: number, part: keyof HMS, dir: 1 | -1): number {
+  const v = splitHMS(Math.min(MAX_SECONDS, totalSeconds));
+  if (part === 'h') v.h = Math.max(0, Math.min(4, v.h + dir));
+  if (part === 'm') v.m = Math.max(0, Math.min(59, v.m + dir));
+  if (part === 's') v.s = dir > 0 ? Math.min(55, Math.floor(v.s / 5) * 5 + 5) : Math.max(0, Math.ceil(v.s / 5) * 5 - 5);
+  return Math.min(MAX_SECONDS, joinHMS(v));
+}
+
+/** Whether plus or minus can still move that part (so the button can show as off). */
+export function canStepHMS(totalSeconds: number, part: keyof HMS, dir: 1 | -1): boolean {
+  return stepHMS(totalSeconds, part, dir) !== Math.min(MAX_SECONDS, Math.max(0, Math.round(totalSeconds)));
+}
+
+/** The dial's fill, 0 to 1: one turn is 60 minutes, anything longer shows full. */
+export function dialFill(seconds: number): number {
+  return Math.max(0, Math.min(1, seconds / 3600));
 }
 
 // ---------- settings ----------
@@ -129,6 +188,8 @@ export function clampSeconds(s: number): number {
 export interface Settings {
   endSound: SoundId;
   ticking: boolean;
+  /** While the app is open, the end sound plays even with the ring switch on silent (like the iPhone's own timer). */
+  playOnSilent: boolean;
   haptics: boolean;
   /** A soft sound and a wiggle when one minute is left. */
   warning: boolean;
@@ -145,6 +206,7 @@ export interface Settings {
 export const DEFAULT_SETTINGS: Settings = {
   endSound: 'chime',
   ticking: false,
+  playOnSilent: true,
   haptics: true,
   warning: true,
   showDigits: true,
@@ -161,7 +223,7 @@ export function parseSettings(raw: unknown): Settings {
   if (!isObj(raw)) return { ...DEFAULT_SETTINGS };
   const out: Settings = { ...DEFAULT_SETTINGS };
   if (SOUNDS.some((s) => s.id === raw.endSound)) out.endSound = raw.endSound as SoundId;
-  for (const k of ['ticking', 'haptics', 'warning', 'showDigits', 'autoLock'] as const)
+  for (const k of ['ticking', 'playOnSilent', 'haptics', 'warning', 'showDigits', 'autoLock'] as const)
     if (typeof raw[k] === 'boolean') out[k] = raw[k] as boolean;
   if (COLORS.some((c) => c.id === raw.color)) out.color = raw.color as ColorId;
   if (SCENES.some((s) => s.id === raw.scene)) out.scene = raw.scene as SceneId;
@@ -391,30 +453,30 @@ export function historyByDay(list: HistoryEntry[]): HistoryDay[] {
 
 // ---------- words ----------
 
-/** "5 minutes", "1 minute 30 seconds", "45 seconds", "1 hour 15 minutes". */
+/**
+ * The time in words, the way a parent says it: one unit in full ("30 seconds",
+ * "5 minutes", "1 hour", "2 hours"), more than one in short ("2 min 30 sec",
+ * "1 hr 30 min", "1 hr 5 min 10 sec").
+ */
 export function durationWords(totalSeconds: number): string {
-  const s = Math.max(0, Math.round(totalSeconds));
-  const h = Math.floor(s / 3600);
-  const m = Math.floor((s % 3600) / 60);
-  const sec = s % 60;
-  const part = (n: number, w: string) => `${n} ${w}${n === 1 ? '' : 's'}`;
-  const parts: string[] = [];
-  if (h) parts.push(part(h, 'hour'));
-  if (m) parts.push(part(m, 'minute'));
-  if (sec || parts.length === 0) parts.push(part(sec, 'second'));
-  return parts.join(' ');
+  const { h, m, s } = splitHMS(totalSeconds);
+  const units = [h, m, s].filter((n) => n > 0).length;
+  if (units <= 1) {
+    const full = (n: number, w: string) => `${n} ${w}${n === 1 ? '' : 's'}`;
+    if (h) return full(h, 'hour');
+    if (m) return full(m, 'minute');
+    return full(s, 'second');
+  }
+  return durationShort(totalSeconds);
 }
 
-/** "5 min", "1 min 30 s", "45 s", "1 h 15 min": for chips and rows. */
+/** "30 sec", "5 min", "2 min 30 sec", "1 hr 30 min": for chips, rows and totals. */
 export function durationShort(totalSeconds: number): string {
-  const s = Math.max(0, Math.round(totalSeconds));
-  const h = Math.floor(s / 3600);
-  const m = Math.floor((s % 3600) / 60);
-  const sec = s % 60;
+  const { h, m, s } = splitHMS(totalSeconds);
   const parts: string[] = [];
-  if (h) parts.push(`${h} h`);
+  if (h) parts.push(`${h} hr`);
   if (m) parts.push(`${m} min`);
-  if (sec || parts.length === 0) parts.push(`${sec} s`);
+  if (s || parts.length === 0) parts.push(`${s} sec`);
   return parts.join(' ');
 }
 
@@ -428,8 +490,14 @@ export function clockText(ms: number): string {
   return h ? `${h}:${pad(m)}:${pad(sec)}` : `${m}:${pad(sec)}`;
 }
 
-/** The name of a plain timer in history: "5 minute timer", "90 second timer". */
+/** The name of a plain timer in history: "30 second timer", "5 minute timer", "1 hour timer", "2 min 30 sec timer". */
 export function plainTimerName(seconds: number): string {
-  if (seconds % 60 === 0) return `${seconds / 60} minute timer`;
-  return `${seconds} second timer`;
+  const { h, m, s } = splitHMS(seconds);
+  const units = [h, m, s].filter((n) => n > 0).length;
+  if (units <= 1) {
+    if (h) return `${h} hour timer`;
+    if (m) return `${m} minute timer`;
+    return `${s} second timer`;
+  }
+  return `${durationShort(seconds)} timer`;
 }

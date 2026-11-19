@@ -9,7 +9,7 @@ import { ColorId, colorHex, durationShort, newId, SavedTimer, sceneInfo } from '
 import Scene from '../scenes/Scene';
 import { Glyph, TimerIcon } from '../ui/Glyph';
 import { Field, HoldGear, Label, ProTag, QuietButton, Sheet, Tap } from '../ui/Kit';
-import { ColorPicker, IconPicker, MinutesField, ScenePicker } from '../ui/Pickers';
+import { ColorPicker, IconPicker, DurationField, ScenePicker } from '../ui/Pickers';
 
 /**
  * Timers a family uses every day, one tap to start: Brush teeth, Screen
@@ -141,7 +141,7 @@ function SavedEditor({
       <Label theme={theme}>Picture</Label>
       <IconPicker theme={theme} value={s.icon} onPick={(icon) => setS({ ...s, icon })} />
       <Label theme={theme}>How long</Label>
-      <MinutesField theme={theme} seconds={s.seconds} onChange={(seconds) => setS({ ...s, seconds })} />
+      <DurationField theme={theme} seconds={s.seconds} onChange={(seconds) => setS({ ...s, seconds })} />
       <Label theme={theme}>Scene</Label>
       <View style={{ marginHorizontal: -space.l }}>
         <ScenePicker theme={theme} value={s.scene} color={s.color} isPro={isPro} onPick={(scene) => setS({ ...s, scene })} onLocked={() => askPro()} />

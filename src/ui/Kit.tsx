@@ -140,7 +140,7 @@ export function Card({ theme, children, style }: { theme: Theme; children: React
 
 export function Label({ theme, children, inset }: { theme: Theme; children: React.ReactNode; inset?: boolean }) {
   return (
-    <Text style={[type.label, styles.label, { color: theme.inkSoft }, inset && { marginHorizontal: space.l + space.xs }]} accessibilityRole="header">
+    <Text style={[type.label, styles.label, { color: theme.inkSoft }, inset && styles.labelInset]} accessibilityRole="header">
       {children}
     </Text>
   );
@@ -276,6 +276,41 @@ export function Sheet({
 }
 
 /**
+ * A short sheet from the bottom of the screen, within thumb reach: a title,
+ * the content, and the buttons at the bottom. Used for the custom time and
+ * the child lock explanation. Tapping the dimmed area outside closes it.
+ */
+export function BottomSheet({
+  theme,
+  visible,
+  title,
+  onClose,
+  children,
+}: {
+  theme: Theme;
+  visible: boolean;
+  title: string;
+  onClose: () => void;
+  children: React.ReactNode;
+}) {
+  const insets = useSafeAreaInsets();
+  return (
+    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose} supportedOrientations={['portrait', 'landscape']}>
+      <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+        <Pressable style={[StyleSheet.absoluteFill, { backgroundColor: theme.scrim }]} onPress={onClose} accessibilityLabel="Close" accessibilityRole="button" />
+        <View style={[styles.bottom, { backgroundColor: theme.bg, paddingBottom: Math.max(insets.bottom, space.l) + space.s }]}>
+          <View style={[styles.grabber, { backgroundColor: theme.rule }]} />
+          <Text style={[type.heading, { color: theme.ink, textAlign: 'center', marginBottom: space.l }]} accessibilityRole="header">
+            {title}
+          </Text>
+          {children}
+        </View>
+      </View>
+    </Modal>
+  );
+}
+
+/**
  * The adult hold: press and hold for two seconds while a ring fills. Used
  * for the settings gear and to undo child lock. A quick tap only shows the
  * hint, so a child poking at the screen never gets through.
@@ -388,11 +423,16 @@ const styles = StyleSheet.create({
   chip: { minWidth: 64, height: 64, borderRadius: radius.medium, borderWidth: 1.5, alignItems: 'center', justifyContent: 'center', paddingHorizontal: space.m },
   chipLock: { position: 'absolute', top: 5, right: 6 },
   card: { borderRadius: radius.large, borderWidth: 1, overflow: 'hidden' },
-  label: { textTransform: 'uppercase', letterSpacing: 1, marginTop: space.xl, marginBottom: space.s, marginLeft: space.xs },
+  // marginHorizontal, not marginLeft: a marginLeft here would win over the inset below.
+  label: { textTransform: 'uppercase', letterSpacing: 1, marginTop: space.xl, marginBottom: space.s, marginHorizontal: space.xs },
+  // On a screen whose rows of chips start at space.l: the label lines up with them.
+  labelInset: { marginHorizontal: space.l },
   pro: { borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2 },
   row: { flexDirection: 'row', alignItems: 'center', minHeight: 56, paddingVertical: space.m, paddingHorizontal: space.l, gap: space.m },
   field: { borderWidth: 1, borderRadius: radius.small, paddingHorizontal: space.l, height: 52 },
   sheetHead: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: space.l, height: 58, borderBottomWidth: StyleSheet.hairlineWidth },
   sheetSide: { width: 76 },
+  bottom: { borderTopLeftRadius: radius.large, borderTopRightRadius: radius.large, paddingHorizontal: space.xl, paddingTop: space.s, maxWidth: 560, width: '100%', alignSelf: 'center' },
+  grabber: { width: 40, height: 5, borderRadius: 3, alignSelf: 'center', marginBottom: space.m },
   hint: { position: 'absolute', top: 50, right: 0, borderRadius: 10, paddingHorizontal: 10, paddingVertical: 6, width: 150, alignItems: 'center' },
 });

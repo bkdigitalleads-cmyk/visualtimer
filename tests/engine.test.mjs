@@ -146,16 +146,18 @@ test('history: newest first, capped, grouped by day with counts and minutes', ()
 
 test('words: durations and the clock read the way a parent says them', () => {
   assert.equal(M.durationWords(300), '5 minutes');
-  assert.equal(M.durationWords(90), '1 minute 30 seconds');
-  assert.equal(M.durationWords(3600 + 900), '1 hour 15 minutes');
+  assert.equal(M.durationWords(90), '1 min 30 sec');
+  assert.equal(M.durationWords(3600 + 900), '1 hr 15 min');
   assert.equal(M.durationWords(0), '0 seconds');
-  assert.equal(M.durationShort(90), '1 min 30 s');
+  assert.equal(M.durationShort(90), '1 min 30 sec');
   assert.equal(M.clockText(299_001), '5:00');
   assert.equal(M.clockText(299_000), '4:59');
   assert.equal(M.clockText(0), '0:00');
   assert.equal(M.clockText(3_900_000), '1:05:00');
   assert.equal(M.plainTimerName(600), '10 minute timer');
   assert.equal(M.plainTimerName(10), '10 second timer');
+  assert.equal(M.plainTimerName(3600), '1 hour timer');
+  assert.equal(M.plainTimerName(150), '2 min 30 sec timer');
 });
 
 // ---------- config ----------
@@ -166,7 +168,7 @@ test('app.json and eas.json: identity, the Expo project, RevenueCat key and ASC 
   assert.equal(app.slug, 'visualtimer');
   assert.equal(app.ios.bundleIdentifier, 'com.bwk.visualtimer');
   assert.equal(app.version, '1.0.0');
-  assert.equal(app.ios.buildNumber, '2', 'build 2: the hourglass icon');
+  assert.equal(app.ios.buildNumber, '3', 'build 3: fixes from the TestFlight test of build 2');
   assert.equal(app.ios.supportsTablet, false);
   assert.equal(app.orientation, 'default', 'portrait and landscape');
   assert.equal(JSON.parse(readFileSync(`${ROOT}package.json`, 'utf8')).version, app.version);
@@ -219,8 +221,8 @@ test('gates: free gets the disc, sand and caterpillar, teal, one saved timer; Pr
   assert.deepEqual(G.fallbackLook('rocket', 'berry', false), { scene: 'wedge', color: 'teal' });
   assert.deepEqual(G.fallbackLook('sand', 'teal', false), { scene: 'sand', color: 'teal' });
   assert.deepEqual(G.fallbackLook('rocket', 'berry', true), { scene: 'rocket', color: 'berry' });
-  // Presets as asked: 1, 2, 5, 10, 15, 20, 30, 45, 60 minutes.
-  assert.deepEqual(M.PRESETS, [1, 2, 5, 10, 15, 20, 30, 45, 60]);
+  // Quick picks as asked: 30 seconds, then 1, 2, 5, 10, 15, 20, 30, 45, 60 minutes.
+  assert.deepEqual(M.QUICK_PICKS.map((p) => p.seconds), [30, 60, 120, 300, 600, 900, 1200, 1800, 2700, 3600]);
 });
 
 test('sounds: every end sound and the tick and warning exist as real WAV files, short enough for a notification', () => {

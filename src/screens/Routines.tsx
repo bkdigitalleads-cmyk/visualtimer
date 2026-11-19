@@ -8,7 +8,7 @@ import { canUseRoutines } from '../gates';
 import { durationShort, moveStep, newId, Routine, RoutineStep, routineSeconds } from '../model';
 import { Glyph, TimerIcon } from '../ui/Glyph';
 import { Card, Field, HoldGear, Label, ProTag, QuietButton, Sheet, Tap } from '../ui/Kit';
-import { IconPicker, MinutesField, ScenePicker } from '../ui/Pickers';
+import { IconPicker, DurationField, ScenePicker } from '../ui/Pickers';
 
 /**
  * Routines: steps in order, each with a picture, a name and a time, run one
@@ -231,7 +231,7 @@ function StepEditor({
       <Label theme={theme}>Picture</Label>
       <IconPicker theme={theme} value={s.icon} onPick={(icon) => setS({ ...s, icon })} />
       <Label theme={theme}>How long</Label>
-      <MinutesField theme={theme} seconds={s.seconds} onChange={(seconds) => setS({ ...s, seconds })} />
+      <DurationField theme={theme} seconds={s.seconds} onChange={(seconds) => setS({ ...s, seconds })} />
       {!isNew ? (
         <View style={{ marginTop: space.xxl }}>
           <QuietButton theme={theme} label="Remove this step" icon="trash" danger onPress={onDelete} />
