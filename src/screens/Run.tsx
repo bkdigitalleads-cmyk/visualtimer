@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Alert, Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
@@ -14,6 +14,10 @@ import Scene from '../scenes/Scene';
 import { Glyph, TimerIcon } from '../ui/Glyph';
 import { HoldRing, MainButton, RoundButton, Tap, useHold, useReduceMotion } from '../ui/Kit';
 import { useFrame } from '../ui/useFrame';
+import LockSheet from '../ui/LockSheet';
+import Svg, { Path } from 'react-native-svg';
+import { flagGet, flagSet } from '../store';
+import { afterLockPaywall, LOCK_EXPLAINED_FLAG, lockTap } from '../rules';
 
 /**
  * The running timer: the scene as big as the screen allows, the time in
@@ -76,10 +80,44 @@ function Run() {
     ]);
   };
 
+  // Child lock: the explanation comes first until a grown-up has turned it on by hand once.
+  const [explain, setExplain] = useState(false);
+  const explained = useRef(false);
+  const pausedForLock = useRef(false);
+  useEffect(() => {
+    flagGet(LOCK_EXPLAINED_FLAG).then((v) => (explained.current = v === '1'));
+  }, []);
+  const resumeIfPaused = () => {
+    if (pausedForLock.current) runner.resume();
+    pausedForLock.current = false;
+  };
+
   const lock = async () => {
-    if (canUseChildLock(isPro)) return setLocked(true);
-    runner.pause();
-    if (await askPro()) setLocked(true);
+    const step = lockTap({ isPro: canUseChildLock(isPro), explained: explained.current });
+    if (step === 'lock') return setLocked(true);
+    if (step === 'explain') return setExplain(true);
+    // Not Pro yet: pause while the paywall is up, so no time is lost.
+    if (timer.status === 'running') {
+      runner.pause();
+      pausedForLock.current = true;
+    }
+    const pro = await askPro();
+    // After buying from here: the explanation, never a straight lock.
+    if (afterLockPaywall(pro) === 'explain') setTimeout(() => setExplain(true), 150);
+    else resumeIfPaused();
+  };
+
+  const lockNow = () => {
+    flagSet(LOCK_EXPLAINED_FLAG, '1');
+    explained.current = true;
+    setExplain(false);
+    setLocked(true);
+    resumeIfPaused();
+  };
+
+  const notNow = () => {
+    setExplain(false);
+    resumeIfPaused();
   };
 
   const toClassroom = async () => {
@@ -116,8 +154,9 @@ function Run() {
   ) : null;
 
   const controls = locked && !done ? (
-    <View style={{ height: 76, alignItems: 'center', justifyContent: 'center' }}>
-      <Glyph name="lock" color={theme.inkFaint} size={22} />
+    <View style={styles.lockedLine} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+      <Glyph name="lock" color={theme.inkSoft} size={16} />
+      <Text style={[type.small, { color: theme.inkSoft, flexShrink: 1, textAlign: 'center' }]}>Locked. Hold any corner for 2 seconds to unlock.</Text>
     </View>
   ) : done ? (
     <View style={{ gap: space.m, width: '100%', maxWidth: 420 }}>
@@ -204,6 +243,7 @@ function Run() {
       )}
       {!locked ? topBar : null}
       {locked ? <LockLayer theme={theme} onUnlock={() => setLocked(false)} /> : null}
+      <LockSheet theme={theme} visible={explain} primaryLabel="Lock now" onPrimary={lockNow} onNotNow={notNow} />
     </View>
   );
 }
@@ -267,10 +307,14 @@ function LockLayer({ theme, onUnlock }: { theme: Theme; onUnlock: () => void }) 
         onAccessibilityAction={onUnlock}
       />
       {corners.map((c) => (
+        <CornerMark key={`m${c}`} where={c} theme={theme} />
+      ))}
+      {corners.map((c) => (
         <Corner key={c} where={c} theme={theme} onUnlock={onUnlock} onTouch={() => setNote(true)} />
       ))}
       {note ? (
-        <View pointerEvents="none" style={[styles.note, { backgroundColor: theme.ink, bottom: insets.bottom + space.m }]}>
+        // At the top, where the buttons were before the lock: the line at the bottom stays readable.
+        <View pointerEvents="none" style={[styles.note, { backgroundColor: theme.ink, top: insets.top + space.s, left: NOTE_SIDE, right: NOTE_SIDE }]}>
           <Glyph name="lock" color={theme.bg} size={18} />
           <Text style={[type.small, { color: theme.bg, flexShrink: 1 }]}>Locked. A grown-up can hold a corner for 2 seconds.</Text>
         </View>
@@ -279,9 +323,38 @@ function LockLayer({ theme, onUnlock }: { theme: Theme; onUnlock: () => void }) 
   );
 }
 
+/** The touch toast sits between the top corner marks, never over them. */
+const NOTE_SIDE = 56;
+
+/** The hold targets: each corner of the screen, CORNER points square. */
+const CORNER = 112;
+
+/**
+ * A faint corner mark in each corner while locked, so a grown-up can see
+ * where to hold. Inside the safe area, and inside the corner's hold target.
+ */
+function CornerMark({ where, theme }: { where: 'tl' | 'tr' | 'bl' | 'br'; theme: Theme }) {
+  const insets = useSafeAreaInsets();
+  const top = where[0] === 't';
+  const left = where[1] === 'l';
+  const v = Math.max(top ? insets.top : insets.bottom, space.l) + space.xs;
+  const h = Math.max(left ? insets.left : insets.right, space.l) + space.xs;
+  const d = `M${left ? 2 : 18} ${top ? 18 : 2}L${left ? 2 : 18} ${top ? 2 : 18}L${left ? 18 : 2} ${top ? 2 : 18}`;
+  return (
+    <View
+      pointerEvents="none"
+      style={{ position: 'absolute', width: 20, height: 20, top: top ? v : undefined, bottom: top ? undefined : v, left: left ? h : undefined, right: left ? undefined : h }}
+    >
+      <Svg width={20} height={20}>
+        <Path d={d} stroke={theme.inkFaint} strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" fill="none" opacity={0.7} />
+      </Svg>
+    </View>
+  );
+}
+
 function Corner({ where, theme, onUnlock, onTouch }: { where: 'tl' | 'tr' | 'bl' | 'br'; theme: Theme; onUnlock: () => void; onTouch: () => void }) {
   const hold = useHold(onUnlock);
-  const size = 96;
+  const size = CORNER;
   const pos = {
     top: where[0] === 't' ? 0 : undefined,
     bottom: where[0] === 'b' ? 0 : undefined,
@@ -315,5 +388,6 @@ const styles = StyleSheet.create({
   row: { flex: 1, flexDirection: 'row', alignItems: 'center' },
   controls: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: space.m },
   pill: { height: 56, borderRadius: 20, borderWidth: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: space.s },
+  lockedLine: { minHeight: 76, maxWidth: 320, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: space.s, paddingHorizontal: space.l },
   note: { position: 'absolute', left: 24, right: 24, borderRadius: 16, padding: space.m, flexDirection: 'row', gap: space.s, alignItems: 'center', justifyContent: 'center' },
 });

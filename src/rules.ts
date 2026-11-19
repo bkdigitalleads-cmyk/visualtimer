@@ -49,3 +49,34 @@ export function dayKey(ms: number): string {
   const day = String(d.getDate()).padStart(2, '0');
   return `${d.getFullYear()}-${m}-${day}`;
 }
+
+// ---------- child lock ----------
+
+/**
+ * The flag that says a grown-up has seen how child lock works and turned it
+ * on by hand once (Lock now, or Turn on in Settings). Until it is set, the
+ * short explanation comes first.
+ */
+export const LOCK_EXPLAINED_FLAG = 'lockExplained';
+
+/** What tapping the lock on a running timer does. */
+export function lockTap(opts: { isPro: boolean; explained: boolean }): 'paywall' | 'explain' | 'lock' {
+  if (!opts.isPro) return 'paywall';
+  return opts.explained ? 'lock' : 'explain';
+}
+
+/**
+ * After the paywall that the lock button opened: with Pro, the explanation
+ * (never a straight lock, so nobody comes back to a locked screen without
+ * knowing the way out); without, nothing.
+ */
+export function afterLockPaywall(isPro: boolean): 'explain' | 'none' {
+  return isPro ? 'explain' : 'none';
+}
+
+/** Turning on Settings' "Child lock when a timer starts". Turning it off always just turns it off. */
+export function autoLockSwitch(opts: { on: boolean; isPro: boolean; explained: boolean }): 'set' | 'paywall' | 'explain' {
+  if (!opts.on) return 'set';
+  if (!opts.isPro) return 'paywall';
+  return opts.explained ? 'set' : 'explain';
+}

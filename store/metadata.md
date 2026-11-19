@@ -43,7 +43,7 @@ Pick a time, pick a scene, press Start. As the minutes pass, the scene changes:
 Every scene is drawn for this app and has a gentle ending when time is up.
 
 MADE FOR REAL DAYS
-- Big presets: 1, 2, 5, 10, 15, 20, 30, 45 and 60 minutes, or turn the dial
+- Big presets from 30 seconds to 60 minutes, or turn the dial, or set any time from 5 seconds to 4 hours
 - Pause, add a minute, add five minutes, or start again
 - A soft heads-up at one minute left
 - A choice of gentle end sounds, an optional quiet tick, and haptics
@@ -112,7 +112,7 @@ Visual Timer is a visual countdown timer for young children, used by parents, te
 - First launch: three short screens, then a 10 second timer to try, then the Pro screen. Its close button (top right) appears after 3 seconds. Close it to use the free version.
 - The free version is fully usable: three scenes (the color disc, the sand jar, the caterpillar), the presets and dial, one saved timer, every sound and history. Pro adds all nine scenes and colors, unlimited saved timers, routines, child lock and classroom mode. Tapping anything with a lock opens the Pro screen.
 - Settings: hold the gear (top right of any tab) for 2 seconds. This keeps children out of settings, support links and purchases from settings.
-- Child lock (Pro): tap the lock on a running timer. To undo it, hold any corner of the screen for 2 seconds.
+- Child lock (Pro): tap the lock on a running timer. The first time, a short sheet explains it; tap Lock now. While locked, the screen says how to unlock and shows a small mark in each corner. To undo it, hold any corner of the screen for 2 seconds.
 - Free trial wording appears only when the Apple ID is eligible for the yearly plan's 3 day trial; the Weekly plan has no trial.
 - Notifications are local only: the end of a timer, each routine step, and one reminder the day before a free trial ends. No push notifications, and the app does not have the push entitlement.
 - All sounds and drawings were made for this app.

@@ -32,7 +32,7 @@ import {
   upcomingStepEnds,
 } from './routine';
 import { cancelAlerts, scheduleAlerts } from './alerts';
-import { playEnd, playTick, playWarning, preloadSounds, stopAll } from './sound';
+import { playEnd, playTick, playWarning, preloadSounds, setPlayOnSilent, stopAll } from './sound';
 import { countFinished, maybeRequestReviewAfterFinish, setReviewGuard } from './reviews';
 import { dayKey } from './rules';
 import { fallbackLook } from './gates';
@@ -111,6 +111,11 @@ export function RunnerProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     setReviewGuard(() => visibleRef.current);
   }, []);
+
+  // Settings' "Play sound when the phone is on silent" sets the audio session's silent-mode rule.
+  useEffect(() => {
+    setPlayOnSilent(settings.playOnSilent);
+  }, [settings.playOnSilent]);
 
   const setActive = useCallback((a: Active | null) => {
     activeRef.current = a;

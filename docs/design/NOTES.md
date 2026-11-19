@@ -78,6 +78,14 @@ No clock face, no numbers, no hands, no red disc. The splash is the hourglass ti
 
 The store screenshots (`store/screenshots/`, by `store/screenshots.js`) are built from the light renders.
 
+## Build 3 (Nov 19): fixes from the TestFlight test of build 2
+
+`build3/` holds the screens this build changed, rendered the same way as the rest, on a small iPhone (375x667) and a large one (440x956), in light and dark, with one contact sheet per set: the timer screen at 5 minutes, 30 seconds, 2 min 30 sec and 1 hr 30 min, the custom time sheet, the saved list and editor with a 45 second and a 1 hr 30 min timer, a routine step, the child lock explanation, the locked screen with and without the touch toast, the paywall at the top and scrolled, the explanation after buying from the lock, and Settings with the new silent switch and the child lock switch.
+
+- The custom time sheet comes up from the bottom, within thumb reach: three rows of big minus and plus (60 points), the time in words on top, Done at the bottom. It uses a new BottomSheet in the kit, which the child lock explanation shares.
+- Locked: a line in soft ink where the controls were, and a faint corner mark in each corner, so a grown-up can see where to hold without the screen calling out to a child.
+- Section labels on the timer screen now line up with the chips (space.l).
+
 ## Checklist
 
 - [x] Tokens in src/theme.ts; light by default, dark follows the system; no white flash at launch.

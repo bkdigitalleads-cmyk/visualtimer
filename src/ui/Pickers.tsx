@@ -1,6 +1,7 @@
-import React from 'react';
-import { ScrollView, Text, View } from 'react-native';
-import { COLORS, ColorId, colorHex, ICONS, IconId, SCENES, SceneId } from '../model';
+import React, { useState } from 'react';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { COLORS, ColorId, colorHex, durationWords, ICONS, IconId, QUICK_PICKS, quickPickFor, SCENES, SceneId } from '../model';
+import TimeSheet from './TimeSheet';
 import { canUseColor, canUseScene } from '../gates';
 import { radius, space, Theme, type } from '../theme';
 import Scene from '../scenes/Scene';
@@ -105,38 +106,64 @@ export function IconPicker({ theme, value, onPick }: { theme: Theme; value: Icon
   );
 }
 
-/** Minutes for an editor: the presets as chips, and minus and plus for anything else. */
-export function MinutesField({ theme, seconds, onChange }: { theme: Theme; seconds: number; onChange: (s: number) => void }) {
-  const m = Math.max(1, Math.round(seconds / 60));
-  const set = (v: number) => onChange(Math.max(1, Math.min(120, v)) * 60);
+/**
+ * How long, for the saved timer editor and routine steps: the time in big
+ * words (tap it to change it), the same quick picks as the timer screen, and
+ * Custom for anything from 5 seconds to 4 hours.
+ */
+export function DurationField({ theme, seconds, onChange }: { theme: Theme; seconds: number; onChange: (s: number) => void }) {
+  const [custom, setCustom] = useState(false);
+  const match = quickPickFor(seconds);
   return (
     <View>
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: space.xl }}>
-        <Tap onPress={() => set(m - 1)} haptic accessibilityRole="button" accessibilityLabel="One minute less" style={{ width: 52, height: 52, borderRadius: 26, backgroundColor: theme.raised, alignItems: 'center', justifyContent: 'center' }}>
-          <Glyph name="minus" color={theme.ink} size={24} weight={2.4} />
-        </Tap>
-        <View style={{ minWidth: 110, alignItems: 'center' }} accessible accessibilityLabel={`${m} minute${m === 1 ? '' : 's'}`}>
-          <Text style={{ fontFamily: 'Fredoka-SemiBold', fontSize: 44, color: theme.ink }}>{m}</Text>
-          <Text style={[type.small, { color: theme.inkSoft, marginTop: -4 }]}>{m === 1 ? 'minute' : 'minutes'}</Text>
-        </View>
-        <Tap onPress={() => set(m + 1)} haptic accessibilityRole="button" accessibilityLabel="One minute more" style={{ width: 52, height: 52, borderRadius: 26, backgroundColor: theme.raised, alignItems: 'center', justifyContent: 'center' }}>
-          <Glyph name="plus" color={theme.ink} size={24} weight={2.4} />
+      <Tap onPress={() => setCustom(true)} accessibilityRole="button" accessibilityLabel={`${durationWords(seconds)}. Change the time`} style={{ alignItems: 'center', paddingVertical: space.s }}>
+        <Text style={{ fontFamily: 'Fredoka-SemiBold', fontSize: 36, color: theme.ink }}>{durationWords(seconds)}</Text>
+        <Text style={[type.small, { color: theme.accent, fontFamily: 'Nunito-Bold' }]}>Change</Text>
+      </Tap>
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.s, justifyContent: 'center', marginTop: space.m }}>
+        {QUICK_PICKS.map((p, i) => {
+          const on = match === i;
+          return (
+            <Tap
+              key={p.seconds}
+              haptic
+              onPress={() => onChange(p.seconds)}
+              accessibilityRole="button"
+              accessibilityState={{ selected: on }}
+              accessibilityLabel={durationWords(p.seconds)}
+              style={[styles.pill, { backgroundColor: on ? theme.accentSoft : theme.surface, borderColor: on ? theme.accent : theme.edge }]}
+            >
+              <Text style={[type.strong, { fontSize: 15, color: on ? theme.accent : theme.ink }]}>
+                {p.label} {p.sub}
+              </Text>
+            </Tap>
+          );
+        })}
+        <Tap
+          haptic
+          onPress={() => setCustom(true)}
+          accessibilityRole="button"
+          accessibilityState={{ selected: match === null }}
+          accessibilityLabel="Custom time"
+          style={[styles.pill, { backgroundColor: match === null ? theme.accentSoft : theme.surface, borderColor: match === null ? theme.accent : theme.edge }]}
+        >
+          <Text style={[type.strong, { fontSize: 15, color: match === null ? theme.accent : theme.ink }]}>Custom</Text>
         </Tap>
       </View>
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.s, justifyContent: 'center', marginTop: space.l }}>
-        {[1, 2, 3, 5, 10, 15, 20, 30, 45, 60].map((v) => (
-          <Tap
-            key={v}
-            haptic
-            onPress={() => set(v)}
-            accessibilityRole="button"
-            accessibilityLabel={`${v} minutes`}
-            style={{ paddingHorizontal: 14, height: 40, borderRadius: 20, justifyContent: 'center', backgroundColor: v === m ? theme.accentSoft : theme.surface, borderWidth: 1, borderColor: v === m ? theme.accent : theme.edge }}
-          >
-            <Text style={[type.strong, { fontSize: 15, color: v === m ? theme.accent : theme.ink }]}>{v}</Text>
-          </Tap>
-        ))}
-      </View>
+      <TimeSheet
+        theme={theme}
+        visible={custom}
+        seconds={seconds}
+        onClose={() => setCustom(false)}
+        onDone={(s) => {
+          setCustom(false);
+          onChange(s);
+        }}
+      />
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  pill: { paddingHorizontal: 14, height: 40, borderRadius: 20, justifyContent: 'center', borderWidth: 1 },
+});
