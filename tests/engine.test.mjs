@@ -168,7 +168,7 @@ test('app.json and eas.json: identity, the Expo project, RevenueCat key and ASC 
   assert.equal(app.slug, 'visualtimer');
   assert.equal(app.ios.bundleIdentifier, 'com.bwk.visualtimer');
   assert.equal(app.version, '1.0.0');
-  assert.equal(app.ios.buildNumber, '3', 'build 3: fixes from the TestFlight test of build 2');
+  assert.equal(app.ios.buildNumber, '4', 'build 4: the paywall shows over sheets');
   assert.equal(app.ios.supportsTablet, false);
   assert.equal(app.orientation, 'default', 'portrait and landscape');
   assert.equal(JSON.parse(readFileSync(`${ROOT}package.json`, 'utf8')).version, app.version);

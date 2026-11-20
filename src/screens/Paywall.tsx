@@ -7,6 +7,7 @@ import { getOffering, isBillingAvailable, purchasePackage, restorePurchases } fr
 import { getTrialEligibleIds, inFreeTrial, trialLabel } from '../trial';
 import { cancelTrialReminder, scheduleTrialReminderIfTrial } from '../reminder';
 import { maybeRequestReviewAfterPurchase } from '../reviews';
+import { paywallShowsIn, ROOT_LAYER } from '../rules';
 import { buttonLabel, disclosureFor, perWeekLine, planLine, planRank, planTag, planTitle, planTypeOf, preselect } from '../offer';
 import { PRIVACY_URL, TERMS_URL } from '../links';
 import { colorHex } from '../model';
@@ -33,9 +34,13 @@ const FEATURES: { title: string; free?: boolean }[] = [
  * all describe the selected plan. On first launch the close button shows
  * after 3 seconds. Rules for the rows are in offer.ts, with checks.
  */
-export default function PaywallModal({ onboarding = false }: { onboarding?: boolean }) {
+export default function PaywallModal({ onboarding = false, layer = ROOT_LAYER }: { onboarding?: boolean; layer?: string }) {
   const theme = useTheme();
-  const { paywallVisible, hidePaywall, setIsPro } = useApp();
+  const { paywallVisible: anyOpen, paywallHost, hidePaywall, paywallDismissed, setIsPro } = useApp();
+  // One copy of the paywall lives at the root and one inside every open sheet
+  // (src/ui/Layer.tsx). Only the copy in the sheet that was on top when Pro
+  // was asked for shows, so iOS presents it from that sheet.
+  const paywallVisible = paywallShowsIn(layer, { visible: anyOpen, host: paywallHost });
   const [offering, setOffering] = useState<PurchasesOffering | null>(null);
   const [selected, setSelected] = useState<PurchasesPackage | null>(null);
   const [trialEligible, setTrialEligible] = useState<Set<string>>(new Set());
@@ -110,8 +115,16 @@ export default function PaywallModal({ onboarding = false }: { onboarding?: bool
   const disclosure = disclosureFor(selectedType, selected?.product.priceString ?? null, selectedTrial);
 
   return (
-    <Modal visible={paywallVisible} animationType="slide" presentationStyle="pageSheet" onRequestClose={() => canClose && hidePaywall()} supportedOrientations={['portrait', 'landscape']}>
-      <View style={{ flex: 1, backgroundColor: theme.bg }}>
+    <Modal
+      visible={paywallVisible}
+      animationType="slide"
+      presentationStyle="pageSheet"
+      onRequestClose={() => canClose && hidePaywall()}
+      // Fires once the close animation is over: only then may the caller present the next sheet.
+      onDismiss={paywallDismissed}
+      supportedOrientations={['portrait', 'landscape']}
+    >
+      <View style={{ flex: 1, backgroundColor: theme.bg }} testID={`paywall-${layer}`}>
         <ScrollView contentContainerStyle={styles.scroll}>
 
           <View style={styles.scenes} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">

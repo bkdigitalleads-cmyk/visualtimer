@@ -15,6 +15,11 @@ import RunScreen from './src/screens/Run';
 import PaywallModal from './src/screens/Paywall';
 import Welcome from './src/screens/Welcome';
 import TabBar, { Tab } from './src/ui/TabBar';
+import { registerPaywallHost } from './src/ui/Layer';
+import { ROOT_LAYER } from './src/rules';
+
+// Every sheet carries a copy of the paywall so it can appear on top of it (src/ui/Layer.tsx).
+registerPaywallHost(PaywallModal);
 import { flagGet, flagSet } from './src/store';
 
 function Shell() {
@@ -58,7 +63,7 @@ function Shell() {
       <View style={{ flex: 1, backgroundColor: theme.bg }}>
         <StatusBar style={theme.isDark ? 'light' : 'dark'} />
         <Welcome onDone={finish} />
-        <PaywallModal onboarding />
+        <PaywallModal onboarding layer={ROOT_LAYER} />
       </View>
     );
   }
@@ -79,7 +84,7 @@ function Shell() {
       {!runner.visible ? <TabBar theme={theme} tab={tab} onTab={setTab} /> : null}
       <Settings visible={settingsOpen} onClose={() => setSettingsOpen(false)} onReplayOnboarding={() => replay.current()} />
       <RunScreen />
-      <PaywallModal />
+      <PaywallModal layer={ROOT_LAYER} />
     </View>
   );
 }
