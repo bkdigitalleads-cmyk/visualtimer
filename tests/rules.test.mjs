@@ -108,7 +108,7 @@ test('onboarding: three screens with real scenes, a 10 second try, then the payw
   assert.match(w, /const TRY_SECONDS = 10;/);
   assert.match(w, /<Scene id=\{p\.scene\}/);
   const app = readFileSync(`${ROOT}App.tsx`, 'utf8');
-  assert.match(app, /<Welcome onDone=\{finish\} \/>\s*<PaywallModal onboarding \/>/);
+  assert.match(app, /<Welcome onDone=\{finish\} \/>\s*<PaywallModal onboarding layer=\{ROOT_LAYER\} \/>/);
   assert.match(app, /askPro\(\)\.then\(done\)/);
 });
 

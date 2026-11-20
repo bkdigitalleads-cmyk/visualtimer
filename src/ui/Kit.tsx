@@ -19,6 +19,7 @@ import Svg, { Circle } from 'react-native-svg';
 import * as Haptics from 'expo-haptics';
 import { radius, space, Theme, type } from '../theme';
 import { Glyph, UiGlyph } from './Glyph';
+import { ModalLayer } from './Layer';
 
 /**
  * The app's own small kit. Tap is the only way something becomes tappable,
@@ -228,7 +229,11 @@ export function Field({ theme, value, onChange, placeholder, label }: { theme: T
   );
 }
 
-/** A full-height sheet with a title, a Cancel or Close, and an optional Save. */
+/**
+ * A full-height sheet with a title, a Cancel or Close, and an optional Save.
+ * Its content sits in a ModalLayer, so the paywall can be asked for from
+ * inside it and still appears on top (src/ui/Layer.tsx).
+ */
 export function Sheet({
   theme,
   visible,
@@ -250,6 +255,7 @@ export function Sheet({
 }) {
   return (
     <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={onClose} supportedOrientations={['portrait', 'landscape']}>
+      <ModalLayer>
       <View style={{ flex: 1, backgroundColor: theme.bg }}>
         <View style={[styles.sheetHead, { borderBottomColor: theme.rule }]}>
           <Tap onPress={onClose} accessibilityRole="button" accessibilityLabel={onSave ? 'Cancel' : 'Close'} hitSlop={10} style={styles.sheetSide}>
@@ -271,6 +277,7 @@ export function Sheet({
         </ScrollView>
         {footer}
       </View>
+      </ModalLayer>
     </Modal>
   );
 }
@@ -279,6 +286,7 @@ export function Sheet({
  * A short sheet from the bottom of the screen, within thumb reach: a title,
  * the content, and the buttons at the bottom. Used for the custom time and
  * the child lock explanation. Tapping the dimmed area outside closes it.
+ * Like Sheet, its content sits in a ModalLayer.
  */
 export function BottomSheet({
   theme,
@@ -296,6 +304,7 @@ export function BottomSheet({
   const insets = useSafeAreaInsets();
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose} supportedOrientations={['portrait', 'landscape']}>
+      <ModalLayer>
       <View style={{ flex: 1, justifyContent: 'flex-end' }}>
         <Pressable style={[StyleSheet.absoluteFill, { backgroundColor: theme.scrim }]} onPress={onClose} accessibilityLabel="Close" accessibilityRole="button" />
         <View style={[styles.bottom, { backgroundColor: theme.bg, paddingBottom: Math.max(insets.bottom, space.l) + space.s }]}>
@@ -306,6 +315,7 @@ export function BottomSheet({
           {children}
         </View>
       </View>
+      </ModalLayer>
     </Modal>
   );
 }

@@ -80,3 +80,36 @@ export function autoLockSwitch(opts: { on: boolean; isPro: boolean; explained: b
   if (!opts.isPro) return 'paywall';
   return opts.explained ? 'set' : 'explain';
 }
+
+// ---------- which modal shows the paywall ----------
+
+/**
+ * iOS presents a modal from the view controller that holds it, and will not
+ * present a second one from the root while a sheet is up. So the paywall is
+ * mounted inside every sheet (src/ui/Layer.tsx), and the one that shows is
+ * the copy in the sheet on top when Pro is asked for: the deepest open
+ * sheet, the latest opened among equals, or the root copy when no sheet is
+ * open. Exactly one copy is ever visible.
+ */
+export const ROOT_LAYER = 'root';
+
+export interface LayerInfo {
+  id: string;
+  /** How many sheets deep: a sheet inside Settings is 2, Settings itself 1. */
+  depth: number;
+  /** Opening order, for sheets at the same depth. */
+  seq: number;
+}
+
+export function topLayer(layers: LayerInfo[]): string {
+  let top: LayerInfo | null = null;
+  for (const l of layers) {
+    if (!top || l.depth > top.depth || (l.depth === top.depth && l.seq > top.seq)) top = l;
+  }
+  return top ? top.id : ROOT_LAYER;
+}
+
+/** Whether the paywall copy in `layer` is the one on screen. */
+export function paywallShowsIn(layer: string, opts: { visible: boolean; host: string }): boolean {
+  return opts.visible && opts.host === layer;
+}

@@ -17,6 +17,8 @@ import {
   starterRoutines,
   starterSaved,
 } from './model';
+import { ROOT_LAYER } from './rules';
+import { PaywallGate } from './paywallGate';
 
 /**
  * App-wide state: settings, Pro, the paywall, saved timers, routines and
@@ -31,9 +33,20 @@ interface AppState {
   isPro: boolean;
   setIsPro: (v: boolean) => void;
   paywallVisible: boolean;
-  /** Opens the paywall; resolves with Pro when it closes. */
+  /** The layer (sheet, or ROOT_LAYER) whose paywall copy is on screen. Fixed while it is open. */
+  paywallHost: string;
+  /**
+   * Opens the paywall in the sheet on top (or at the root when none is open);
+   * resolves with Pro once it has finished closing, so the caller can present
+   * the next sheet safely.
+   */
   askPro: () => Promise<boolean>;
   hidePaywall: () => void;
+  /** The paywall Modal's onDismiss: the close animation is over. */
+  paywallDismissed: () => void;
+  /** Sheets register while open (src/ui/Layer.tsx). */
+  registerLayer: (id: string, depth: number) => void;
+  unregisterLayer: (id: string) => void;
   saved: SavedTimer[];
   setSaved: (next: SavedTimer[]) => void;
   routines: Routine[];
@@ -57,8 +70,21 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [saved, setSavedState] = useState<SavedTimer[]>([]);
   const [routines, setRoutinesState] = useState<Routine[]>([]);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
-  const paywallWaiters = useRef<((pro: boolean) => void)[]>([]);
+  const [paywallHost, setPaywallHost] = useState<string>(ROOT_LAYER);
   const proRef = useRef(false);
+  // The open and close sequence lives in src/paywallGate.ts, where the tests drive it.
+  const gate = useRef<PaywallGate | null>(null);
+  if (!gate.current) {
+    gate.current = new PaywallGate({
+      onChange: (open, host) => {
+        setPaywallHost(host);
+        setPaywallVisible(open);
+      },
+      isPro: () => proRef.current,
+      setTimer: (fn, ms) => setTimeout(fn, ms),
+      clearTimer: (h) => clearTimeout(h as ReturnType<typeof setTimeout>),
+    });
+  }
 
   useEffect(() => {
     (async () => {
@@ -137,22 +163,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     saveJson(KEYS.history, []);
   }, []);
 
-  const askPro = useCallback(() => {
-    return new Promise<boolean>((resolve) => {
-      paywallWaiters.current.push(resolve);
-      setPaywallVisible(true);
-    });
-  }, []);
-
-  const hidePaywall = useCallback(() => {
-    setPaywallVisible(false);
-    // After the sheet's own animation, so callers can present something next.
-    setTimeout(() => {
-      const waiters = paywallWaiters.current;
-      paywallWaiters.current = [];
-      waiters.forEach((w) => w(proRef.current));
-    }, 350);
-  }, []);
+  const askPro = useCallback(() => gate.current!.ask(), []);
+  const hidePaywall = useCallback(() => gate.current!.hide(), []);
+  const paywallDismissed = useCallback(() => gate.current!.dismissed(), []);
+  const registerLayer = useCallback((id: string, depth: number) => gate.current!.register(id, depth), []);
+  const unregisterLayer = useCallback((id: string) => gate.current!.unregister(id), []);
 
   const setIsPro = useCallback((v: boolean) => {
     proRef.current = v;
@@ -167,8 +182,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       isPro,
       setIsPro,
       paywallVisible,
+      paywallHost,
       askPro,
       hidePaywall,
+      paywallDismissed,
+      registerLayer,
+      unregisterLayer,
       saved,
       setSaved,
       routines,
@@ -179,7 +198,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       freeOverride,
       setFreeOverride,
     }),
-    [ready, settings, updateSettings, isPro, setIsPro, paywallVisible, askPro, hidePaywall, saved, setSaved, routines, setRoutines, history, addHistory, clearHistory, freeOverride]
+    [ready, settings, updateSettings, isPro, setIsPro, paywallVisible, paywallHost, askPro, hidePaywall, paywallDismissed, registerLayer, unregisterLayer, saved, setSaved, routines, setRoutines, history, addHistory, clearHistory, freeOverride]
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
