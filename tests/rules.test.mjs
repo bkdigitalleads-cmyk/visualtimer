@@ -175,11 +175,11 @@ test('store text 1.0.1: the English keywords as given, and the Spanish (Mexico) 
   const kw = md.match(/- Keywords \(es-MX\) \((\d+)\/100\): (.+)/);
   assert.equal(name[2], 'Countdown Timer: Visual Clock');
   assert.equal(sub[2], 'Timer for Kids, Study & Focus');
-  assert.equal(kw[2], 'time,blindness,special,education,classroom,teacher,preschool,bedtime,minute,homework,morning,calm');
-  // Phrases only form inside one listing: the Spanish (Mexico) field carries words the English one does not,
-  // except time, which is there so "time blindness" forms in that listing.
+  assert.equal(kw[2], 'time,blindness,special,education,toddler,nap,potty,training,reading,morning,routine,sand,schedule', 'as entered in App Store Connect for 1.0.1');
+  // Phrases only form inside one listing: the words shared with the English field are there to make
+  // phrases in this listing (time blindness, potty training, morning routine).
   const enWords = new Set(en[2].split(','));
-  assert.deepEqual(kw[2].split(',').filter((w) => enWords.has(w)), ['time']);
+  assert.deepEqual(kw[2].split(',').filter((w) => enWords.has(w)), ['time', 'toddler', 'potty', 'routine', 'sand', 'schedule']);
   assert.match(sub[2], /\bStudy\b/, 'study stays in the Spanish subtitle, so "study timer" forms there');
   for (const [m, max] of [[name, 30], [sub, 30], [kw, 100]]) {
     assert.equal(m[2].length, Number(m[1]), `${m[2]} is ${m[2].length}, not ${m[1]}`);
@@ -192,4 +192,29 @@ test('store text 1.0.1: the English keywords as given, and the Spanish (Mexico) 
   assert.match(md, /## What's New \(1\.0\.1\)\n\nSmall fixes and improvements\./);
   assert.match(md, /- What's New \(1\.0\.1\): Small fixes and improvements\./);
   assert.match(md, /## Description\n\nSome children cannot read a clock yet/);
+});
+
+test('store text 1.0.1: the eight extra listings indexed for US search fit their fields', () => {
+  const md = readFileSync(`${ROOT}store/metadata.md`, 'utf8');
+  const part = md.split('## Extra listings indexed for US search')[1];
+  assert.ok(part, 'the section is there');
+  const section = part.split('\n## ')[0];
+  assert.match(section, /Apple also reads these eight languages for searches in the US store; each holds its own English name, subtitle and keyword field, and the English description; phrases only form inside one listing\./);
+  const rows = section
+    .split('\n')
+    .filter((l) => l.startsWith('| ') && !l.startsWith('| Listing') && !l.startsWith('|---'))
+    .map((l) => l.split('|').slice(1, -1).map((c) => c.trim()));
+  const listings = rows.map((r) => r[0]);
+  assert.deepEqual(listings, ['Arabic', 'French', 'Korean', 'Portuguese (Brazil)', 'Russian', 'Vietnamese', 'Chinese (Simplified)', 'Chinese (Traditional)']);
+  for (const [listing, name, subtitle, keywords] of rows) {
+    assert.ok(name.length > 0 && name.length <= 30, `${listing} name is ${name.length} characters`);
+    assert.ok(subtitle.length > 0 && subtitle.length <= 30, `${listing} subtitle is ${subtitle.length} characters`);
+    assert.ok(Buffer.byteLength(keywords, 'utf8') <= 100, `${listing} keywords are ${Buffer.byteLength(keywords, 'utf8')} bytes`);
+    assert.ok(!/\s/.test(keywords), `${listing} keywords have a space`);
+    assert.ok(keywords.split(',').every((w) => w.length > 0), `${listing} keywords have an empty entry`);
+  }
+  // Spot checks against what was entered in App Store Connect.
+  const by = Object.fromEntries(rows.map((r) => [r[0], r.slice(1)]));
+  assert.deepEqual(by['Arabic'], ['Study Timer: Visual Countdown', 'Pomodoro Timer & Focus Clock', 'kids,task,time,management,hourglass,sand,adhd,reading,work,productivity,toddler,nap,morning,routine']);
+  assert.deepEqual(by['Chinese (Traditional)'], ['Hourglass Timer: Sand Clock', 'Visual Countdown, Kids & ADHD', 'study,focus,task,time,management,toddler,nap,reading,work,productivity,morning,routine,schedule']);
 });
