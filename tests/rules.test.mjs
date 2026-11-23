@@ -163,3 +163,28 @@ test('website: landing, privacy and support pages; the privacy page says Purchas
   // No third-party requests from the site: fonts are served from docs/fonts.
   for (const f of walk(`${ROOT}docs`, ['.html', '.css'])) assert.ok(!/<script|fonts\.googleapis|googletagmanager|gtag\(/.test(readFileSync(f, 'utf8')), f);
 });
+
+test('store text 1.0.1: the English keywords as given, and the Spanish (Mexico) listing fits and reads right', () => {
+  const md = readFileSync(`${ROOT}store/metadata.md`, 'utf8');
+  assert.match(md, /^# Visual Timer, App Store listing \(1\.0\.1\)/);
+  const en = md.match(/## Keywords \((\d+)\/100\)\n\n([^\n]+)/);
+  assert.equal(en[2], 'study,pomodoro,task,time,management,schedule,first,then,routine,potty,hourglass,sand,autism,toddler');
+  assert.equal(en[2].length, 99);
+  const name = md.match(/- Name \(es-MX\) \((\d+)\/30\): (.+)/);
+  const sub = md.match(/- Subtitle \(es-MX\) \((\d+)\/30\): (.+)/);
+  const kw = md.match(/- Keywords \(es-MX\) \((\d+)\/100\): (.+)/);
+  assert.equal(name[2], 'Countdown Timer: Visual Clock');
+  assert.equal(sub[2], 'Timer for Kids, Study & Focus');
+  assert.equal(kw[2], 'pomodoro,task,time,management,blindness,special,education,sand,hourglass,minute,classroom,teacher');
+  for (const [m, max] of [[name, 30], [sub, 30], [kw, 100]]) {
+    assert.equal(m[2].length, Number(m[1]), `${m[2]} is ${m[2].length}, not ${m[1]}`);
+    assert.ok(m[2].length <= max);
+  }
+  assert.ok(!/\s/.test(kw[2]), 'no spaces in the keyword field');
+  const taken = new Set(`${name[2]} ${sub[2]}`.toLowerCase().match(/[a-z]+/g));
+  for (const w of kw[2].split(',')) assert.ok(!taken.has(w) && !taken.has(w.replace(/s$/, '')) && !taken.has(`${w}s`), `${w} repeats the Spanish name or subtitle`);
+  assert.match(md, /- Description: the English \(U\.S\.\) description above, reused word for word\./);
+  assert.match(md, /## What's New \(1\.0\.1\)\n\nSmall fixes and improvements\./);
+  assert.match(md, /- What's New \(1\.0\.1\): Small fixes and improvements\./);
+  assert.match(md, /## Description\n\nSome children cannot read a clock yet/);
+});

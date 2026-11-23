@@ -2,6 +2,18 @@
 
 Newest first. One entry per commit: date, version/build, what changed and why, and how it was checked.
 
+- 2026-11-23: 1.0.1 build 5, keyword update, no feature changes. Branch claude/timer-1.0.1-keywords from main; 1.0.0 (4) is live on the App Store.
+  - Why: new App Store keywords need a new version to go live.
+  - app.json: version 1.0.0 to 1.0.1, ios.buildNumber 4 to 5. package.json and package-lock.json (the root package's own version, two lines) 1.0.0 to 1.0.1. No code, assets or paywall changed.
+  - store/metadata.md:
+    - English (U.S.) keywords (99/100): study,pomodoro,task,time,management,schedule,first,then,routine,potty,hourglass,sand,autism,toddler. None repeats a word from the English name or subtitle. The old 1.0.0 keywords are kept on the line under them for reference.
+    - New Spanish (Mexico) listing, used for extra indexed words in the US store: name Countdown Timer: Visual Clock (29/30), subtitle Timer for Kids, Study & Focus (29/30), keywords (97/100) pomodoro,task,time,management,blindness,special,education,sand,hourglass,minute,classroom,teacher, the English description reused word for word.
+    - What's New (1.0.1) for both: Small fixes and improvements.
+    - The description starts with "Some children cannot read a clock yet", as expected, so it is unchanged.
+    - App Review notes: a line saying 1.0.1 changes only the keywords and adds the Spanish (Mexico) listing.
+  - Tests: version 1.0.1 and build 5 pinned; a new check for the English keywords, the Spanish (Mexico) name, subtitle and keyword lengths, no Spanish keyword repeating the Spanish name or subtitle, the reused description and What's New.
+  - Checked: npx tsc --noEmit clean; npm test 58/58; npx expo config --type introspect shows 1.0.1 (5), ios.entitlements {}, no microphone, no background modes.
+  - Noticed, not changed: six Spanish (Mexico) keywords repeat English (U.S.) ones (pomodoro, task, time, management, sand, hourglass), and the English keyword "study" is also in the Spanish subtitle. In the US store Apple indexes both locales together, so a repeat adds no new word; those 49 characters could carry other words. Left exactly as Brian gave them.
 - 2026-11-20: 1.0.0 build 4, the paywall now appears over sheets. Branch claude/timer-paywall-over-sheets from main after PR 3 merged.
   - The bug (from the owner's TestFlight test of build 3, and listed under Noticed, not changed in build 3): with Settings open as a free user, See Pro did nothing. Settings is a pageSheet Modal; the paywall Modal was mounted at the app root, and iOS will not present a second modal from the root while a sheet is already presented. The same was true of every askPro inside a sheet: Settings' child lock switch, and the locked scenes and colors in the saved timer and routine editors.
   - The fix:
