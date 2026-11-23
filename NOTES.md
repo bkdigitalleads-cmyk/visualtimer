@@ -2,6 +2,14 @@
 
 Newest first. One entry per commit: date, version/build, what changed and why, and how it was checked.
 
+- 2026-11-23: 1.0.1 build 5, store text record only (no build). Branch claude/timer-1.0.1-store-record from main after PR 5 merged; build 5 is in App Store Connect and 1.0.1 is submitted. Only store/metadata.md, its test and this file change; nothing under the EAS path filters, so no new build.
+  - Why: store/metadata.md should match what was actually entered in App Store Connect for 1.0.1.
+  - Spanish (Mexico) keywords (97/100), changed after PR 5: time,blindness,special,education,toddler,nap,potty,training,reading,morning,routine,sand,schedule. The note under them was rewritten to match: they share time, toddler, potty, routine, sand and schedule with the English field, to make phrases inside this listing (time blindness, potty training, morning routine). Name, subtitle and What's New are unchanged.
+  - New section "Extra listings indexed for US search": a line of explanation and a table of the eight listings (Arabic, French, Korean, Portuguese (Brazil), Russian, Vietnamese, Chinese (Simplified), Chinese (Traditional)) with the name, subtitle and keywords entered for each.
+  - Tests (tests/rules.test.mjs): the Spanish (Mexico) check now expects the entered keywords and the six shared words. A new check reads the table and fails if any name or subtitle is over 30 characters, any keyword field is over 100 bytes or has a space or an empty entry, or the eight listings are not all there; it spot-checks two rows word for word.
+  - Measured before writing: names 27 to 29 characters, subtitles 26 to 29, keyword fields 91 to 99 bytes.
+  - Checked: npx tsc --noEmit clean; npm test 59/59.
+  - Noticed, not changed: CLAUDE.md's status line still says 1.0.1 is on branch claude/timer-1.0.1-keywords (PR, not merged); this task was limited to store/metadata.md, its test and NOTES.md.
 - 2026-11-23: 1.0.1 build 5, Spanish (Mexico) keywords replaced (store text only, same branch and PR as the keyword update).
   - Why: phrases only form inside one listing, so the Spanish (Mexico) field should carry words the English (U.S.) one does not. This resolves the "Noticed, not changed" item in the entry below.
   - store/metadata.md: Spanish (Mexico) keywords (97/100) are now time,blindness,special,education,classroom,teacher,preschool,bedtime,minute,homework,morning,calm. The only word shared with the English keywords is time, kept so time blindness forms in that listing. Study stays in the Spanish subtitle so study timer forms there too. A short line under the listing says why.

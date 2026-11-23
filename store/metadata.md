@@ -83,10 +83,27 @@ Used for extra indexed words in the US store: Apple also indexes the Spanish (Me
 
 - Name (es-MX) (29/30): Countdown Timer: Visual Clock
 - Subtitle (es-MX) (29/30): Timer for Kids, Study & Focus
-- Keywords (es-MX) (97/100): time,blindness,special,education,classroom,teacher,preschool,bedtime,minute,homework,morning,calm
+- Keywords (es-MX) (97/100): time,blindness,special,education,toddler,nap,potty,training,reading,morning,routine,sand,schedule
 - Description: the English (U.S.) description above, reused word for word.
-- Why these words: phrases only form inside one listing, so this field carries words the English (U.S.) one does not. The one shared word, time, is here so time blindness forms in this listing. Study stays in the subtitle so study timer forms here too.
+- As entered in App Store Connect for 1.0.1 (changed after PR 5). Phrases only form inside one listing, so the words this field shares with the English (U.S.) one (time, toddler, potty, routine, sand, schedule) are here to make phrases in this listing, such as time blindness, potty training, toddler nap and morning routine. Study stays in the subtitle so study timer forms here too.
 - What's New (1.0.1): Small fixes and improvements.
+
+## Extra listings indexed for US search
+
+Apple also reads these eight languages for searches in the US store; each holds its own English name, subtitle and keyword field, and the English description; phrases only form inside one listing.
+
+| Listing | Name | Subtitle | Keywords |
+|---|---|---|---|
+| Arabic | Study Timer: Visual Countdown | Pomodoro Timer & Focus Clock | kids,task,time,management,hourglass,sand,adhd,reading,work,productivity,toddler,nap,morning,routine |
+| French | Focus Timer: Visual Pomodoro | Study Countdown, Task Clock | kids,time,management,blindness,hourglass,sand,work,productivity,reading,adhd,toddler,schedule,nap |
+| Korean | Kids Visual Timer: Sand Clock | Hourglass Countdown, Toddlers | potty,training,nap,morning,routine,first,then,schedule,reading,study,focus,autism,adhd,work |
+| Portuguese (Brazil) | Visual Schedule: First Then | Kids Routine Timer, Countdown | autism,adhd,special,education,morning,nap,study,task,toddler,potty,clock,daily,reading,sand |
+| Russian | Countdown Timer: Kids Clock | Visual Timer for Kids, ADHD | toddler,nap,potty,training,reading,work,productivity,sand,morning,routine,first,then,schedule,study |
+| Vietnamese | Timer for Kids: Visual Clock | Countdown, Potty & Bedtime | toddler,training,nap,morning,routine,first,then,schedule,reading,sand,study,focus,work,task |
+| Chinese (Simplified) | Task Timer: Visual Countdown | Time Management & Focus Clock | adhd,blindness,study,work,pomodoro,hourglass,sand,kids,productivity,reading,toddler,schedule |
+| Chinese (Traditional) | Hourglass Timer: Sand Clock | Visual Countdown, Kids & ADHD | study,focus,task,time,management,toddler,nap,reading,work,productivity,morning,routine,schedule |
+
+As entered in App Store Connect for 1.0.1. Every name and subtitle is 30 characters or fewer, and every keyword field is 100 bytes or fewer with no spaces (checked by npm test).
 
 ## In-app purchases (RevenueCat offering `default`, entitlement `pro`)
 
