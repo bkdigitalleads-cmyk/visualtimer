@@ -1,4 +1,4 @@
-# Visual Timer, App Store listing (1.0.0)
+# Visual Timer, App Store listing (1.0.1)
 
 Copy rules: no em dashes, no exclamation marks, no "unlock", "premium" or "magic", plain wording, prices only as Apple shows them. Support address: bkdigitalleads@gmail.com only.
 
@@ -14,11 +14,11 @@ Copy rules: no em dashes, no exclamation marks, no "unlock", "premium" or "magic
 - Privacy policy URL: https://bkdigitalleads-cmyk.github.io/visualtimer/privacy.html
 - Copyright: 2026 Brian Kershner
 
-## Keywords (96/100)
+## Keywords (99/100)
 
-autism,toddler,preschool,classroom,teacher,routine,schedule,hourglass,sand,bedtime,therapy,child
+study,pomodoro,task,time,management,schedule,first,then,routine,potty,hourglass,sand,autism,toddler
 
-None repeats a word from the name or the subtitle (visual, timer, kids, countdown, clock, adhd, focus); Apple already indexes those. No other product's name.
+English (U.S.), from 1.0.1. None repeats a word from the name or the subtitle (visual, timer, kids, countdown, clock, adhd, focus); Apple already indexes those. No other product's name. Until 1.0.0 (96/100): autism,toddler,preschool,classroom,teacher,routine,schedule,hourglass,sand,bedtime,therapy,child
 
 ## Promotional text (157/170)
 
@@ -71,9 +71,22 @@ Free: the color disc, the sand jar and the caterpillar, every preset and the dia
 Terms of Use: https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
 Privacy: https://bkdigitalleads-cmyk.github.io/visualtimer/privacy.html
 
-## What's New (1.0.0)
+## What's New (1.0.1)
 
-First release.
+Small fixes and improvements.
+
+The same text for English (U.S.) and Spanish (Mexico). 1.0.0 was "First release."
+
+## Spanish (Mexico) listing (1.0.1)
+
+Used for extra indexed words in the US store: Apple also indexes the Spanish (Mexico) name, subtitle and keywords for US searches. The listing text is in English on purpose.
+
+- Name (es-MX) (29/30): Countdown Timer: Visual Clock
+- Subtitle (es-MX) (29/30): Timer for Kids, Study & Focus
+- Keywords (es-MX) (97/100): time,blindness,special,education,classroom,teacher,preschool,bedtime,minute,homework,morning,calm
+- Description: the English (U.S.) description above, reused word for word.
+- Why these words: phrases only form inside one listing, so this field carries words the English (U.S.) one does not. The one shared word, time, is here so time blindness forms in this listing. Study stays in the subtitle so study timer forms here too.
+- What's New (1.0.1): Small fixes and improvements.
 
 ## In-app purchases (RevenueCat offering `default`, entitlement `pro`)
 
@@ -105,7 +118,9 @@ Six captioned screenshots made by `store/screenshots.js` from the renders in doc
 5. Saved Timers for Every Day
 6. Child Lock for Little Hands
 
-## App Review notes (1.0.0)
+## App Review notes (1.0.0, unchanged for 1.0.1)
+
+1.0.1 changes only the keywords and adds the Spanish (Mexico) listing; the app is the same as 1.0.0 build 4.
 
 Visual Timer is a visual countdown timer for young children, used by parents, teachers and therapists. There is no account and no sign-in; everything is stored on the device.
 
