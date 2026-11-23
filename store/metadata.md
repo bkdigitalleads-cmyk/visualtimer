@@ -83,8 +83,9 @@ Used for extra indexed words in the US store: Apple also indexes the Spanish (Me
 
 - Name (es-MX) (29/30): Countdown Timer: Visual Clock
 - Subtitle (es-MX) (29/30): Timer for Kids, Study & Focus
-- Keywords (es-MX) (97/100): pomodoro,task,time,management,blindness,special,education,sand,hourglass,minute,classroom,teacher
+- Keywords (es-MX) (97/100): time,blindness,special,education,classroom,teacher,preschool,bedtime,minute,homework,morning,calm
 - Description: the English (U.S.) description above, reused word for word.
+- Why these words: phrases only form inside one listing, so this field carries words the English (U.S.) one does not. The one shared word, time, is here so time blindness forms in this listing. Study stays in the subtitle so study timer forms here too.
 - What's New (1.0.1): Small fixes and improvements.
 
 ## In-app purchases (RevenueCat offering `default`, entitlement `pro`)

@@ -175,7 +175,12 @@ test('store text 1.0.1: the English keywords as given, and the Spanish (Mexico) 
   const kw = md.match(/- Keywords \(es-MX\) \((\d+)\/100\): (.+)/);
   assert.equal(name[2], 'Countdown Timer: Visual Clock');
   assert.equal(sub[2], 'Timer for Kids, Study & Focus');
-  assert.equal(kw[2], 'pomodoro,task,time,management,blindness,special,education,sand,hourglass,minute,classroom,teacher');
+  assert.equal(kw[2], 'time,blindness,special,education,classroom,teacher,preschool,bedtime,minute,homework,morning,calm');
+  // Phrases only form inside one listing: the Spanish (Mexico) field carries words the English one does not,
+  // except time, which is there so "time blindness" forms in that listing.
+  const enWords = new Set(en[2].split(','));
+  assert.deepEqual(kw[2].split(',').filter((w) => enWords.has(w)), ['time']);
+  assert.match(sub[2], /\bStudy\b/, 'study stays in the Spanish subtitle, so "study timer" forms there');
   for (const [m, max] of [[name, 30], [sub, 30], [kw, 100]]) {
     assert.equal(m[2].length, Number(m[1]), `${m[2]} is ${m[2].length}, not ${m[1]}`);
     assert.ok(m[2].length <= max);

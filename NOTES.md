@@ -2,6 +2,11 @@
 
 Newest first. One entry per commit: date, version/build, what changed and why, and how it was checked.
 
+- 2026-11-23: 1.0.1 build 5, Spanish (Mexico) keywords replaced (store text only, same branch and PR as the keyword update).
+  - Why: phrases only form inside one listing, so the Spanish (Mexico) field should carry words the English (U.S.) one does not. This resolves the "Noticed, not changed" item in the entry below.
+  - store/metadata.md: Spanish (Mexico) keywords (97/100) are now time,blindness,special,education,classroom,teacher,preschool,bedtime,minute,homework,morning,calm. The only word shared with the English keywords is time, kept so time blindness forms in that listing. Study stays in the Spanish subtitle so study timer forms there too. A short line under the listing says why.
+  - Test: the store text check pins the new list, checks that time is the only word shared with the English keywords, and that Study is still in the Spanish subtitle.
+  - Checked: npx tsc --noEmit clean; npm test 58/58.
 - 2026-11-23: 1.0.1 build 5, keyword update, no feature changes. Branch claude/timer-1.0.1-keywords from main; 1.0.0 (4) is live on the App Store.
   - Why: new App Store keywords need a new version to go live.
   - app.json: version 1.0.0 to 1.0.1, ios.buildNumber 4 to 5. package.json and package-lock.json (the root package's own version, two lines) 1.0.0 to 1.0.1. No code, assets or paywall changed.
